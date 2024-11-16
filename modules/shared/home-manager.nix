@@ -10,8 +10,8 @@ let
   user = "mroz";
   email = "michael@mroz.io";
   # TODO: Figure this out. The current live config is Darwin-specific.
-  # onePassPath = "~/.1password/agent.sock";
-  onePassPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+  onePassPath = "~/.1password/agent.sock";
+  # onePassPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 in
 {
   # Shared shell configuration
@@ -363,7 +363,7 @@ in
     };
     extraConfig = ''
       Host *
-          IdentityAgent ${onePassPath}
+          IdentityAgent "${onePassPath}"
     '';
 
   };

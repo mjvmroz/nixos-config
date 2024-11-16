@@ -9,7 +9,9 @@ let
   name = "Michael Mroz";
   user = "mroz";
   email = "michael@mroz.io";
-  onePassPath = "~/.1password/agent.sock";
+  # TODO: Figure this out. The current live config is Darwin-specific.
+  # onePassPath = "~/.1password/agent.sock";
+  onePassPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 in
 {
   # Shared shell configuration
@@ -149,8 +151,10 @@ in
         editor = "vim";
         autocrlf = "input";
       };
-      # commit.gpgsign = true;
-      gpg.ssh.program = "/Applications/1Password.app/bin/op-ssh-sign";
+      user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFXfLkgyrc4VC+xkXo5uCmQqx+nRxrdKwvyKOzEud6IF";
+      gpg.format = "ssh";
+      gpg.ssh.program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+      commit.gpgsign = true;
       pull.rebase = true;
       rebase.autoStash = true;
     };

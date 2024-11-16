@@ -9,7 +9,13 @@ let
   name = "Michael Mroz";
   user = "mroz";
   email = "michael@mroz.io";
-  # TODO: Figure this out. The current live config is Darwin-specific.
+  # TODO: Figure this out. 1Password recommends the latter (on Darwin), but the former seems more general and apparently works?
+  # test -S informs me that neither exists so who knows
+  #####
+  ##### Note
+  ##### In order to start the 1Password SSH agent, you must open the 1Password settings,
+  ##### go to the Developer section and check the checkbox "Use the SSH agent".
+  #####
   onePassPath = "~/.1password/agent.sock";
   # onePassPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 in
@@ -153,7 +159,12 @@ in
       };
       user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFXfLkgyrc4VC+xkXo5uCmQqx+nRxrdKwvyKOzEud6IF";
       gpg.format = "ssh";
+      # TODO: This is Darwin-specific and needs to be moved
       gpg.ssh.program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+      # I'm currently getting 1Password via Homebrew, so this doesn't work.
+      # But this seems a good alternative:
+      # https://github.com/reckenrode/nixos-configs/blob/main/modules/by-name/1p/1password/darwin-module.nix#L21-L48
+      # gpg.ssh.program = "${lib.getExe' pkgs._1password-gui "op-ssh-sign"}";
       commit.gpgsign = true;
       pull.rebase = true;
       rebase.autoStash = true;

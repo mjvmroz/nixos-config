@@ -16,8 +16,8 @@ let
   ##### In order to start the 1Password SSH agent, you must open the 1Password settings,
   ##### go to the Developer section and check the checkbox "Use the SSH agent".
   #####
-  onePassPath = "~/.1password/agent.sock";
-  # onePassPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+  # onePassPath = "~/.1password/agent.sock";
+  onePassPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 in
 {
   # Shared shell configuration

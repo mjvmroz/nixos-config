@@ -3,7 +3,8 @@
 let
   user = "mroz";
   xdg_configHome  = "/home/${user}/.config";
-  shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib; };
+  onePassPath = "~/fix-me-for-nixos";
+  shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib onePassPath; };
   shared-files = import ../shared/files.nix { inherit config pkgs; };
 
   polybar-user_modules = builtins.readFile (pkgs.substituteAll {

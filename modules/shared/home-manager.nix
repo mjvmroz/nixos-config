@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  onePassPath,
   ...
 }:
 
@@ -9,7 +10,6 @@ let
   name = "Michael Mroz";
   user = "mroz";
   email = "michael@mroz.io";
-  onePassPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 in
 {
   # Shared shell configuration

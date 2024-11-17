@@ -2,7 +2,8 @@
   config,
   pkgs,
   lib,
-  onePassPath,
+  onePassAgentPath,
+  gpgSshProgram,
   ...
 }:
 
@@ -102,7 +103,7 @@ in
           printf '%s' "$tilde_less"
       }
 
-      export SSH_AUTH_SOCK=$(expand_tilde "${onePassPath}")
+      export SSH_AUTH_SOCK=$(expand_tilde "${onePassAgentPath}")
     '';
   };
 
@@ -155,12 +156,7 @@ in
       };
       user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFXfLkgyrc4VC+xkXo5uCmQqx+nRxrdKwvyKOzEud6IF";
       gpg.format = "ssh";
-      # TODO: This is Darwin-specific and needs to be moved
-      gpg.ssh.program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
-      # I'm currently getting 1Password via Homebrew, so this doesn't work.
-      # But this seems a good alternative:
-      # https://github.com/reckenrode/nixos-configs/blob/main/modules/by-name/1p/1password/darwin-module.nix#L21-L48
-      # gpg.ssh.program = "${lib.getExe' pkgs._1password-gui "op-ssh-sign"}";
+      gpg.ssh.program = gpgSshProgram;
       commit.gpgsign = true;
       pull.rebase = true;
       rebase.autoStash = true;
@@ -369,7 +365,7 @@ in
     #   };
     # };
     extraConfig = ''
-      IdentityAgent "${onePassPath}"
+      IdentityAgent "${onePassAgentPath}"
     '';
 
   };

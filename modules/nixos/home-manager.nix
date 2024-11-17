@@ -3,8 +3,12 @@
 let
   user = "mroz";
   xdg_configHome  = "/home/${user}/.config";
-  onePassPath = "~/fix-me-for-nixos";
-  shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib onePassPath; };
+  # FIXME: idk where 1Password will be on NixOS, will figure out later
+  #        I think I can do stuff like this:
+  #        gpg.ssh.program = "${lib.getExe' pkgs._1password-gui "op-ssh-sign"}";
+  onePassAgentPath = "~/fix-me-for-nixos";
+  gpgSshProgram = "~/fix-me-for-nixos";
+  shared-programs = import ../shared/home-manager.nix { inherit config pkgs lib onePassAgentPath; };
   shared-files = import ../shared/files.nix { inherit config pkgs; };
 
   polybar-user_modules = builtins.readFile (pkgs.substituteAll {

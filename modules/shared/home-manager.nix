@@ -9,14 +9,6 @@ let
   name = "Michael Mroz";
   user = "mroz";
   email = "michael@mroz.io";
-  # TODO: Figure this out. 1Password recommends the latter (on Darwin), but the former seems more general and apparently works?
-  # test -S informs me that neither exists so who knows
-  #####
-  ##### Note
-  ##### In order to start the 1Password SSH agent, you must open the 1Password settings,
-  ##### go to the Developer section and check the checkbox "Use the SSH agent".
-  #####
-  # onePassPath = "~/.1password/agent.sock";
   onePassPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
 in
 {
@@ -369,8 +361,7 @@ in
       };
     };
     extraConfig = ''
-      Host *
-          IdentityAgent "${onePassPath}"
+      IdentityAgent "${onePassPath}"
     '';
 
   };

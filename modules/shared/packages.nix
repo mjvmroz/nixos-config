@@ -10,6 +10,7 @@ with pkgs; [
 
   # General packages for development and system management
   alacritty
+  silver-searcher
   aspell
   aspellDicts.en
   bash-completion

@@ -9,6 +9,9 @@
       },
       "formatting": {
         "command": ["nix fmt"]
+      },
+      "autoArchive": {
+        "enabled": true
       }
     }
   },

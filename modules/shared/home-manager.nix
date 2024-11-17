@@ -95,6 +95,14 @@ in
       shell() {
           nix-shell '<nixpkgs>' -A "$1"
       }
+
+      expand_tilde() {
+          tilde_less="''${1#\~/}"
+          [ "$1" != "$tilde_less" ] && tilde_less="$HOME/$tilde_less"
+          printf '%s' "$tilde_less"
+      }
+
+      export SSH_AUTH_SOCK=$(expand_tilde "${onePassPath}")
     '';
   };
 
@@ -348,18 +356,18 @@ in
       (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/config_external")
       (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/config_external")
     ];
-    matchBlocks = {
-      "github.com" = {
-        identitiesOnly = true;
-        identityFile = [
-          # (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/id_github")
-          # (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/id_github")
-          # Hack because I haven't got dedicated keys for Github yet
-          (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/id_ed25519")
-          (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/id_ed25519")
-        ];
-      };
-    };
+    # matchBlocks = {
+    #   "github.com" = {
+    #     identitiesOnly = true;
+    #     identityFile = [
+    #       # (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/id_github")
+    #       # (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/id_github")
+    #       # Hack because I haven't got dedicated keys for Github yet
+    #       (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/id_ed25519")
+    #       (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/id_ed25519")
+    #     ];
+    #   };
+    # };
     extraConfig = ''
       IdentityAgent "${onePassPath}"
     '';

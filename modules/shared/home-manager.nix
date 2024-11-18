@@ -104,6 +104,9 @@ in
       }
 
       export SSH_AUTH_SOCK=$(expand_tilde "${onePassAgentPath}")
+      
+      bindkey '^[[1;9D' beginning-of-line
+      bindkey '^[[1;9C' end-of-line
     '';
   };
 
@@ -292,16 +295,23 @@ in
   alacritty = {
     enable = true;
     settings = {
+      keyboard.bindings = [
+        { key = "Left";  mods = "Alt";     chars = "\\u001bB"; }
+        { key = "Right"; mods = "Alt";     chars = "\\u001bF"; }
+        { key = "Back";  mods = "Command"; chars = "\\u0015"; }
+      ];
+
       cursor = {
         style = "Block";
       };
 
       window = {
-        opacity = 1.0;
+        opacity = 1;
         padding = {
-          x = 24;
-          y = 24;
+          x = 8;
+          y = 8;
         };
+        option_as_alt = "Both";
       };
 
       font = {
@@ -311,7 +321,7 @@ in
         };
         size = lib.mkMerge [
           (lib.mkIf pkgs.stdenv.hostPlatform.isLinux 10)
-          (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin 14)
+          (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin 12)
         ];
       };
 

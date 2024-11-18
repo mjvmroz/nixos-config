@@ -5,7 +5,6 @@ let user = "mroz";
     keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJRQgKmvXGkbgTLFTCT0gtm6/fojgXcJhfcvNW2n6+WB" ];
  in {
   imports = [
-    ../../modules/nixos/secrets.nix
     ../../modules/nixos/disk-config.nix
     ../../modules/shared
     agenix.nixosModules.default

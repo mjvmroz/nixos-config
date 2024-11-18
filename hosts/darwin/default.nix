@@ -5,7 +5,6 @@ let user = "mroz"; in
 {
 
   imports = [
-    ../../modules/darwin/secrets.nix
     ../../modules/darwin/security.nix
     ../../modules/darwin/home-manager.nix
     ../../modules/shared

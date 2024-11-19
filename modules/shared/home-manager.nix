@@ -104,7 +104,7 @@ in
       }
 
       export SSH_AUTH_SOCK=$(expand_tilde "${onePassAgentPath}")
-      
+
       bindkey '^[[1;9D' beginning-of-line
       bindkey '^[[1;9C' end-of-line
     '';
@@ -296,9 +296,21 @@ in
     enable = true;
     settings = {
       keyboard.bindings = [
-        { key = "Left";  mods = "Alt";     chars = "\\u001bB"; }
-        { key = "Right"; mods = "Alt";     chars = "\\u001bF"; }
-        { key = "Back";  mods = "Command"; chars = "\\u0015"; }
+        {
+          key = "Left";
+          mods = "Alt";
+          chars = "\\u001bB";
+        }
+        {
+          key = "Right";
+          mods = "Alt";
+          chars = "\\u001bF";
+        }
+        {
+          key = "Back";
+          mods = "Command";
+          chars = "\\u0015";
+        }
       ];
 
       cursor = {

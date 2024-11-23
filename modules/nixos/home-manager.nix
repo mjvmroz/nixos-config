@@ -1,4 +1,5 @@
 {
+  identity,
   config,
   pkgs,
   lib,
@@ -6,8 +7,7 @@
 }:
 
 let
-  user = "mroz";
-  xdg_configHome = "/home/${user}/.config";
+  xdg_configHome = "/home/${identity.user}/.config";
   # FIXME: idk where 1Password will be on NixOS, will figure out later
   #        I think I can do stuff like this:
   #        gpg.ssh.program = "${lib.getExe' pkgs._1password-gui "op-ssh-sign"}";
@@ -48,10 +48,10 @@ in
 {
   home = {
     enableNixpkgsReleaseCheck = false;
-    username = "${user}";
-    homeDirectory = "/home/${user}";
+    username = "${identity.user}";
+    homeDirectory = "/home/${identity.user}";
     packages = pkgs.callPackage ./packages.nix { };
-    file = shared-files // import ./files.nix { inherit user; };
+    file = shared-files // import ./files.nix { inherit identity; };
     stateVersion = "21.05";
   };
 

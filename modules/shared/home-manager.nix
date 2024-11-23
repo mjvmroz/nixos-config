@@ -1,4 +1,5 @@
 {
+  identity,
   config,
   pkgs,
   lib,
@@ -7,11 +8,6 @@
   ...
 }:
 
-let
-  name = "Michael Mroz";
-  user = "mroz";
-  email = "michael@mroz.io";
-in
 {
   # Shared shell configuration
   zsh = {
@@ -161,8 +157,8 @@ in
       };
     };
     ignores = [ "*.swp" ];
-    userName = name;
-    userEmail = email;
+    userName = identity.name;
+    userEmail = identity.email;
     lfs = {
       enable = true;
     };
@@ -386,8 +382,8 @@ in
   ssh = {
     enable = true;
     includes = [
-      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/config_external")
-      (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/config_external")
+      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${identity.user}/.ssh/config_external")
+      (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${identity.user}/.ssh/config_external")
     ];
     extraConfig = ''
       IdentityAgent "${onePassAgentPath}"

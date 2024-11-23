@@ -1,7 +1,8 @@
-{ user, ... }:
+{ identity, ... }:
 
 let
   home = builtins.getEnv "HOME";
+  user = identity.user;
   xdg_configHome = "${home}/.config";
   xdg_dataHome = "${home}/.local/share";
   xdg_stateHome = "${home}/.local/state";

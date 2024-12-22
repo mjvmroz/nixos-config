@@ -71,6 +71,8 @@
       gloga = "git log --oneline --decorate --graph --all";
       cf = "code $(fzf)";
       "c." = "code .";
+      dr = "direnv reload";
+      da = "direnv allow";
     };
     cdpath = [ "~/.local/share/src" ];
     initExtraFirst = ''

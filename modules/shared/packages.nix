@@ -3,27 +3,28 @@
 with pkgs;
 [
   # System packages
-  tailscale
+  tailscale # Private VPN
 
   # Nix
-  nixfmt-rfc-style
+  nixfmt-rfc-style # Opinionated Nix style
   nil # Nix language server
 
   # General packages for development and system management
-  alacritty
-  silver-searcher
-  aspell
-  aspellDicts.en
-  bash-completion
+  alacritty # Terminal emulator
+  silver-searcher # Nice search tool
+  aspell # Spell checker
+  aspellDicts.en # English dictionary
+  bash-completion # Better bash completion
   bat # Nice cat replacement
   btop # Better top
-  coreutils
-  killall
-  neofetch
-  openssh
-  sqlite
-  wget
-  zip
+  coreutils # GNU core utilities
+  killall # Kill processes by name
+  neofetch # System info
+  openssh # Secure shell
+  sqlite # Single-threaded file-based database
+  wget # Download files
+  zip # Compress files
+  graphite-cli # Graphite (friendly git stacking) command line interface
 
   # Encryption and security tools
   age
@@ -32,14 +33,14 @@ with pkgs;
   libfido2
 
   # Cloud-related tools and SDKs
-  docker
-  docker-compose
+  docker # Containerization
+  docker-compose # Docker orchestration
 
   # Media-related packages
   dejavu_fonts
-  ffmpeg
-  fd
-  font-awesome
+  ffmpeg # Video and audio processing
+  fd # Better find
+  font-awesome # Icon font
   hack-font
   noto-fonts
   noto-fonts-emoji

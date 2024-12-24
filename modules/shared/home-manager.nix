@@ -73,6 +73,8 @@
       "c." = "code .";
       dr = "direnv reload";
       da = "direnv allow";
+      cb = "cabal build";
+      ccb = "cabal clean && cabal build";
     };
     cdpath = [ "~/.local/share/src" ];
     initExtraFirst = ''

@@ -17,6 +17,7 @@ _:
   "syncthing" # File Sync
   "1password" # Password Manager
   "chatgpt" # Know things
+  "ollama" # Know things less good but less internetly
 
   # Entertainment Tools
   "iina" # Video Player

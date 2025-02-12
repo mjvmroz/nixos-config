@@ -82,9 +82,10 @@
         "com.apple.sound.beep.volume" = 0.0;
         "com.apple.sound.beep.feedback" = 0;
       };
-      ".GlobalPreferences" = {
-        "com.apple.mouse.scaling" = -1.0;
-      };
+      # Disabled for now as I'm using linearmouse via Brew Casks
+      # ".GlobalPreferences" = {
+      #   "com.apple.mouse.scaling" = -1.0;
+      # };
 
       dock = {
         autohide = false;

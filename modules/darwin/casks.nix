@@ -6,6 +6,8 @@ _:
   "homebrew/cask/docker" # Containerization
   "visual-studio-code" # Code Editor
   "zed" # Code Editor
+  "texifier" # LaTeX Editor
+  "texstudio" # LaTeX Editor
 
   # Communication Tools
   # "discord"

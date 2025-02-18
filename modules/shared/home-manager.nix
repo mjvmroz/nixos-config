@@ -112,10 +112,13 @@
         port_info $1 | awk '{print $2}'
       }
 
-
       port_kill() {
         setopt pipefail
         port_pid $1 | xargs kill
+      }
+
+      csvless () {
+        column -s, -t < $1 | less -#2 -N -S
       }
 
       export SSH_AUTH_SOCK=$(expand_tilde "${onePassAgentPath}")
@@ -132,8 +135,6 @@
     settings = {
       add_newline = true;
 
-      # Replace the '❯' symbol in the prompt with '➜'
-      # The name of the module we are configuring is 'character'
       character = {
         success_symbol = "[λ](bold green)"; # The 'success_symbol' segment is being set to '➜' with the color 'bold green'
         error_symbol = "[λ](bold red)";

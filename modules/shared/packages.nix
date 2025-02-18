@@ -25,10 +25,13 @@ with pkgs;
   neofetch # System info
   openssh # Secure shell
   sqlite # Single-threaded file-based database
-  wget # Download files
-  httpie # HTTP client
   zip # Compress files
   graphite-cli # Graphite (friendly git stacking) command line interface
+
+  # Network
+  wget # Download files
+  httpie # HTTP client
+  trippy # Network diagnostics
 
   # Encryption and security tools
   age
@@ -58,7 +61,6 @@ with pkgs;
   # Text and terminal utilities
   xsv # CSV toolkit
   hunspell
-  iftop
   # jetbrains-mono
   jq
   # tree

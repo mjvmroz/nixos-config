@@ -121,6 +121,10 @@
         column -s, -t < $1 | less -#2 -N -S
       }
 
+      tree () {
+        exa --tree --color=always $1 | less
+      }
+
       export SSH_AUTH_SOCK=$(expand_tilde "${onePassAgentPath}")
 
       bindkey '^[[1;9D' beginning-of-line

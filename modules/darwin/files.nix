@@ -11,5 +11,8 @@ let
   xdg_stateHome = "${config.users.users.${identity.user}.home}/.local/state";
 in
 {
-  "${xdg_configHome}/linearmouse/linearmouse.json".source = ./config/linearmouse/linearmouse.json;
+  "${xdg_configHome}" = {
+    source = ./config;
+    recursive = true;
+  };
 }

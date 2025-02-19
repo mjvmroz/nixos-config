@@ -39,6 +39,13 @@ Finally, cut over to the new Nix:
 ./switch.sh
 ```
 
+#### Manual steps:
+
+- **iTerm2**: Preferences -> General -> Preferences -> Load preferences from a custom folder or URL:
+  - `~/.config/nix-iterm2` (read-only via nix), or
+  - `${thisProject}/modules/darwin/config/nix-iterm` (read-write via git, not controlled by nix)
+- **1Password**: Preferences -> Developer -> Use the SSH Agent
+
 ### For NixOS
 
 ```sh

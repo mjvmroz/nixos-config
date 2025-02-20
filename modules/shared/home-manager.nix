@@ -180,7 +180,7 @@
         editor = "vim";
         autocrlf = "input";
       };
-      user.signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFXfLkgyrc4VC+xkXo5uCmQqx+nRxrdKwvyKOzEud6IF";
+      user.signingkey = identity.signingKey;
       gpg.format = "ssh";
       gpg.ssh.program = gpgSshProgram;
       commit.gpgsign = true;

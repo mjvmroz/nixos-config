@@ -54,6 +54,8 @@
         name = "Michael Mroz";
         email = "michael@mroz.io";
         user = "mroz";
+        sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJRQgKmvXGkbgTLFTCT0gtm6/fojgXcJhfcvNW2n6+WB";
+        signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFXfLkgyrc4VC+xkXo5uCmQqx+nRxrdKwvyKOzEud6IF";
       };
       linuxSystems = [
         "x86_64-linux"

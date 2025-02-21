@@ -2,9 +2,6 @@
 
 with pkgs;
 [
-  # System packages
-  tailscale # Private VPN
-
   # Nix
   nixfmt-rfc-style # Opinionated Nix style
   nil # Nix language server

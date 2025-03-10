@@ -4,6 +4,9 @@
   config,
   pkgs,
   lib,
+  homebrew-bundle,
+  homebrew-core,
+  homebrew-cask,
   ...
 }:
 
@@ -43,6 +46,18 @@
     '';
   };
 
+  nix-homebrew = {
+    user = identity.user;
+    enable = true;
+    taps = {
+      "homebrew/homebrew-core" = homebrew-core;
+      "homebrew/homebrew-cask" = homebrew-cask;
+      "homebrew/homebrew-bundle" = homebrew-bundle;
+    };
+    mutableTaps = false;
+    autoMigrate = true;
+  };
+
   # Turn off NIX_PATH warnings now that we're using flakes
   system.checks.verifyNixPath = false;
 
@@ -54,9 +69,6 @@
     ]
     ++ (import ../../modules/shared/packages.nix { inherit pkgs; });
 
-  # Sussy about this. Doesn't seem like it should be necessary.
-  # Check this with `dscacheutil -q group | grep nixbld -B 3`
-  ids.gids.nixbld = 350;
   system = {
     # This value determines the NixOS release with which your system is to be
     # compatible, in order to avoid breaking some software such as database

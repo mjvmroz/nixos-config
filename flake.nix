@@ -118,33 +118,50 @@
         nixpkgs.lib.genAttrs linuxSystems mkLinuxApps
         // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
-      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (
-        system:
-        darwin.lib.darwinSystem {
-          inherit system;
-          specialArgs = inputs // {
-            inherit identity;
+      darwinConfigurations =
+        nixpkgs.lib.genAttrs darwinSystems (
+          system:
+          darwin.lib.darwinSystem {
+            inherit system;
+            specialArgs = inputs // {
+              inherit identity;
+            };
+            modules = [
+              home-manager.darwinModules.home-manager
+              nix-homebrew.darwinModules.nix-homebrew
+              ./hosts/darwin
+            ];
+          }
+        )
+        // {
+          sapporo = darwin.lib.darwinSystem {
+            system = "aarch64-darwin";
+            specialArgs = inputs // {
+              inherit identity;
+            };
+            modules = [
+              home-manager.darwinModules.home-manager
+              nix-homebrew.darwinModules.nix-homebrew
+              hosts/darwin
+              {
+                # Sussy about this. Doesn't seem like it should be necessary.
+                # Check this with `dscacheutil -q group | grep nixbld -B 3`
+                ids.gids.nixbld = 350;
+              }
+            ];
           };
-          modules = [
-            home-manager.darwinModules.home-manager
-            nix-homebrew.darwinModules.nix-homebrew
-            {
-              nix-homebrew = {
-                user = identity.user;
-                enable = true;
-                taps = {
-                  "homebrew/homebrew-core" = homebrew-core;
-                  "homebrew/homebrew-cask" = homebrew-cask;
-                  "homebrew/homebrew-bundle" = homebrew-bundle;
-                };
-                mutableTaps = false;
-                autoMigrate = true;
-              };
-            }
-            ./hosts/darwin
-          ];
-        }
-      );
+          chomusuke = darwin.lib.darwinSystem {
+            system = "aarch64-darwin";
+            specialArgs = inputs // {
+              inherit identity;
+            };
+            modules = [
+              home-manager.darwinModules.home-manager
+              nix-homebrew.darwinModules.nix-homebrew
+              hosts/darwin
+            ];
+          };
+        };
 
       nixosConfigurations =
         nixpkgs.lib.genAttrs linuxSystems (

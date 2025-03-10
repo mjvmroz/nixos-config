@@ -316,80 +316,9 @@
     '';
   };
 
-  alacritty = {
+  ghostty = {
     enable = true;
-    settings = {
-      keyboard.bindings = [
-        {
-          key = "Left";
-          mods = "Alt";
-          chars = "\\u001bB";
-        }
-        {
-          key = "Right";
-          mods = "Alt";
-          chars = "\\u001bF";
-        }
-        {
-          key = "Back";
-          mods = "Command";
-          chars = "\\u0015";
-        }
-      ];
-
-      cursor = {
-        style = "Block";
-      };
-
-      window = {
-        opacity = 1;
-        padding = {
-          x = 8;
-          y = 8;
-        };
-        option_as_alt = "Both";
-      };
-
-      font = {
-        normal = {
-          family = "MesloLGS NF";
-          style = "Regular";
-        };
-        size = lib.mkMerge [
-          (lib.mkIf pkgs.stdenv.hostPlatform.isLinux 10)
-          (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin 12)
-        ];
-      };
-
-      colors = {
-        primary = {
-          background = "0x1f2528";
-          foreground = "0xc0c5ce";
-        };
-
-        normal = {
-          black = "0x1f2528";
-          red = "0xec5f67";
-          green = "0x99c794";
-          yellow = "0xfac863";
-          blue = "0x6699cc";
-          magenta = "0xc594c5";
-          cyan = "0x5fb3b3";
-          white = "0xc0c5ce";
-        };
-
-        bright = {
-          black = "0x65737e";
-          red = "0xec5f67";
-          green = "0x99c794";
-          yellow = "0xfac863";
-          blue = "0x6699cc";
-          magenta = "0xc594c5";
-          cyan = "0x5fb3b3";
-          white = "0xd8dee9";
-        };
-      };
-    };
+    package = pkgs.ghostty;
   };
 
   ssh = {

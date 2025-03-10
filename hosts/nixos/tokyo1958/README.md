@@ -21,7 +21,9 @@ and will aim to integrate more of my MacOS shell environment and
 desktop applications as I get things working.
 
 ## Manual steps
+
 Install protonup impurely:
+
 ```shell
 protonup
 ```

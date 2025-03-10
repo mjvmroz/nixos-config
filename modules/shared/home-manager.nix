@@ -316,11 +316,6 @@
     '';
   };
 
-  ghostty = {
-    enable = true;
-    package = pkgs.ghostty;
-  };
-
   ssh = {
     enable = true;
     includes = [

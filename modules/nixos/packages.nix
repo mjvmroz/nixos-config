@@ -9,6 +9,9 @@ shared-packages
   # System packages
   tailscale # Private VPN
 
+  # Gaming
+  protonup
+
   # App and package management
   # appimage-run
   # gnumake

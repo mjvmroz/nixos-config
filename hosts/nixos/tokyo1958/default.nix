@@ -1,24 +1,70 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
+# and in the NixOS manual (accessible by running 'nixos-help').
 
 { config, pkgs, lib, identity, hyprland, ... }:
 let
   pkgs-unstable = hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-  onePassAgentPath = "~/.1password/agent.sock";
-  gpgSshProgram = lib.getExe' pkgs._1password-gui "op-ssh-sign";
-in {
-  home-manager.useGlobalPkgs = true;
-  home-manager.useUserPackages = true;
-  home-manager.users.${identity.user} = import ./home.nix {
+  sharedFiles = import ../../../modules/shared/files.nix { inherit config pkgs; };
+  shared-programs = import ../../../modules/shared/home-manager.nix {
     inherit
-      identity
+      config
+      pkgs
+      lib
       onePassAgentPath
       gpgSshProgram
-      lib
-      pkgs
-      config
+      identity
       ;
+  };
+  onePassAgentPath = "~/.1password/agent.sock";
+  gpgSshProgram = lib.getExe' pkgs._1password-gui "op-ssh-sign";
+  # This one is 1Password-managed
+  keys = [ identity.sshKey ];
+in {
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = {
+      inherit identity;
+    };
+    users.${identity.user} =
+      {
+        pkgs,
+        config,
+        lib,
+        ...
+      }:
+      {
+        home = {
+          stateVersion = "25.05";
+
+          sessionVariables = {
+            STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+          };
+
+          # GPU issues with Hyprland :(
+          # wayland.windowManager.hyprland = {
+          #   enable = true;
+          # };
+
+          enableNixpkgsReleaseCheck = false;
+          packages = pkgs.callPackage ../../../modules/nixos/packages.nix { };
+          file = lib.mkMerge [
+            sharedFiles
+            # additionalFiles
+          ];
+        };
+
+        programs = shared-programs // {
+          vscode = {
+            enable = true;
+          };
+        };
+
+        # Marked broken Oct 20, 2022 check later to remove this
+        # https://github.com/nix-community/home-manager/issues/3344
+        manual.manpages.enable = true;
+      };
   };
 
   imports =
@@ -93,19 +139,33 @@ in {
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.mroz = {
-    isNormalUser = true;
-    description = "Michael Mroz";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      code-cursor
-    #  thunderbird
-    ];
+  # Define a user account. Don't forget to set a password with 'passwd'.
+  users.users = {
+    mroz = {
+      isNormalUser = true;
+      description = "Michael Mroz";
+      extraGroups = [ "networkmanager" "wheel" ];
+      packages = with pkgs; [
+        code-cursor
+      #  thunderbird
+      ];
+      shell = pkgs.zsh;
+      openssh.authorizedKeys.keys = keys;
+    };
+
+    root = {
+      openssh.authorizedKeys.keys = keys;
+    };
   };
 
-  # Install firefox.
   programs = {
+    # Needed for anything GTK related
+    dconf.enable = true;
+
+    # My shell
+    zsh.enable = true;
+
+    # 1Password is my agent of choice for SSH and GPG
     _1password.enable = true;
     _1password-gui = {
       enable = true;
@@ -167,7 +227,7 @@ in {
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # on your system were taken. It's perfectly fine and recommended to leave
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
@@ -181,7 +241,7 @@ in {
 
   environment.sessionVariables = {
     WLR_RENDERER_ALLOW_SOFTWARE = "1";  # Fallback if needed
-    GBM_BACKEND = "nvidia-drm";  # Use NVIDIA’s GBM
+    GBM_BACKEND = "nvidia-drm";  # Use NVIDIA's GBM
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";  # Ensure OpenGL uses NVIDIA
     # WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card";  # Force NVIDIA GPU
     # WLR_NO_HARDWARE_CURSORS = "1";  # Workaround for cursor rendering issues

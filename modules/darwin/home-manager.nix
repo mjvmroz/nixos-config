@@ -101,7 +101,6 @@ in
         { path = "/Applications/Google Chrome.app/"; }
         { path = "/System/Applications/Messages.app/"; }
         { path = "/Applications/iTerm.app/"; }
-        { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
         { path = "/Applications/1Password.app/"; }
         { path = "/Applications/Visual Studio Code.app/"; }
         { path = "/Applications/Spotify.app/"; }

@@ -199,6 +199,11 @@
 
   eza.enable = true;
 
+  zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
   vim = {
     enable = true;
     plugins = with pkgs.vimPlugins; [

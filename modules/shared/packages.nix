@@ -11,7 +11,6 @@ with pkgs;
   rustup # Rust programming language
 
   # General packages for development and system management
-  alacritty # Terminal emulator
   silver-searcher # Nice search tool
   aspell # Spell checker
   aspellDicts.en # English dictionary

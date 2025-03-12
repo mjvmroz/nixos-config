@@ -93,7 +93,7 @@
       export HISTIGNORE="pwd:ls:cd"
 
       # nix-direnv makes this warning a virtual certainty, and I know about ctrl-c
-      export DIRENV_WARN_TIMEOUT=100y
+      export DIRENV_WARN_TIMEOUT=100000h
 
       # nix shortcuts
       shell() {

@@ -147,6 +147,8 @@
         success_symbol = "[λ](bold green)"; # The 'success_symbol' segment is being set to '➜' with the color 'bold green'
         error_symbol = "[λ](bold red)";
       };
+
+      command_timeout = 600000; # milliseconds (10 minutes)
     };
   };
 

@@ -14,6 +14,7 @@
   imports = [
     ../../modules/darwin/security.nix
     ../../modules/darwin/home-manager.nix
+    ../../modules/darwin/postgres.nix
     ../../modules/shared
     agenix.darwinModules.default
   ];
@@ -113,17 +114,5 @@
         TrackpadThreeFingerDrag = true;
       };
     };
-  };
-
-  services.postgresql = {
-    enable = true;
-    package = pkgs.postgresql_14;
-    extraPlugins = with pkgs.postgresql_11.pkgs; [
-      postgis
-      pg_repack
-    ];
-    authentication = ''
-      local all all trust
-    '';
   };
 }

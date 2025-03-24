@@ -114,4 +114,16 @@
       };
     };
   };
+
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_14;
+    extraPlugins = with pkgs.postgresql_11.pkgs; [
+      postgis
+      pg_repack
+    ];
+    authentication = ''
+      local all all trust
+    '';
+  };
 }

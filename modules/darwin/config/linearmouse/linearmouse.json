@@ -1,117 +1,79 @@
 {
-  "$schema" : "https:\/\/schema.linearmouse.app\/0.9.5",
-  "schemes" : [
+  "$schema": "https://schema.linearmouse.app/0.9.5",
+  "schemes": [
     {
-      "if" : {
-        "device" : {
-          "productName" : "Finalmouse Wireless Receiver",
-          "vendorID" : "0x1915",
-          "serialNumber" : "466BC2B7",
-          "category" : "mouse",
-          "productID" : "0xf6b0"
-        }
-      },
-      "scrolling" : {
-        "speed" : 0,
-        "distance" : {
-          "vertical" : 3,
-          "horizontal" : "auto"
+      "if": [
+        {
+          "device": {
+            "category": "mouse",
+            "productName": "Finalmouse Wireless Receiver",
+            "vendorID": "0x1915",
+            "serialNumber": "466BC2B7",
+            "productID": "0xf6b0"
+          }
         },
-        "acceleration" : 1
-      },
-      "pointer" : {
-        "disableAcceleration" : true,
-        "acceleration" : 0.65,
-        "speed" : 0.25
-      }
-    },
-    {
-      "if" : {
-        "device" : {
-          "vendorID" : "0x46d",
-          "category" : "mouse",
-          "productID" : "0xc547",
-          "productName" : "USB Receiver"
-        }
-      },
-      "pointer" : {
-        "disableAcceleration" : true
-      },
-      "scrolling" : {
-        "speed" : {
-          "vertical" : 0
+        {
+          "device": {
+            "category": "mouse",
+            "productName": "UltralightX mouse",
+            "productID": "0x102",
+            "vendorID": "0x361d",
+            "serialNumber": "0000000000MA233702663 (B839EA77)"
+          }
         },
-        "distance" : {
-          "vertical" : 3
+        {
+          "device": {
+            "category": "mouse",
+            "vendorID": "0x46d",
+            "productID": "0xc547",
+            "productName": "USB Receiver"
+          }
         },
-        "acceleration" : {
-          "vertical" : 1
+        {
+          "device": {
+            "category": "mouse",
+            "productName": "UltralightX dongle",
+            "vendorID": "0x361d",
+            "productID": "0x100",
+            "serialNumber": "6F06F0BAA9831B16"
+          }
+        },
+        {
+          "device": {
+            "category": "mouse",
+            "productID": "0xf6b1",
+            "vendorID": "0x1915",
+            "serialNumber": "466BC2B7",
+            "productName": "Finalmouse Wireless"
+          }
         }
+      ],
+      "scrolling": {
+        "speed": 0,
+        "distance": {
+          "vertical": 3,
+          "horizontal": "auto"
+        },
+        "acceleration": 1
+      },
+      "pointer": {
+        "disableAcceleration": true,
+        "acceleration": 0.65,
+        "speed": 0.5
       }
     },
     {
-      "if" : {
-        "device" : {
-          "productName" : "UltralightX mouse",
-          "category" : "mouse",
-          "productID" : "0x102",
-          "vendorID" : "0x361d",
-          "serialNumber" : "0000000000MA233702663 (B839EA77)"
+      "if": {
+        "device": {
+          "vendorID": "0x0",
+          "category": "trackpad",
+          "productID": "0x0",
+          "productName": "Apple Internal Keyboard / Trackpad"
         }
       },
-      "scrolling" : {
-        "acceleration" : {
-          "vertical" : 1
-        }
-      }
-    },
-    {
-      "pointer" : {
-        "disableAcceleration" : true
-      },
-      "scrolling" : {
-        "acceleration" : {
-          "vertical" : 1
-        }
-      },
-      "if" : {
-        "device" : {
-          "category" : "mouse",
-          "productName" : "UltralightX dongle",
-          "vendorID" : "0x361d",
-          "productID" : "0x100",
-          "serialNumber" : "6F06F0BAA9831B16"
-        }
-      }
-    },
-    {
-      "pointer" : {
-        "disableAcceleration" : true,
-        "acceleration" : 0.5,
-        "speed" : 0.0689655172413792768
-      },
-      "if" : {
-        "device" : {
-          "productID" : "0xf6b1",
-          "category" : "mouse",
-          "vendorID" : "0x1915",
-          "serialNumber" : "466BC2B7",
-          "productName" : "Finalmouse Wireless"
-        }
-      }
-    },
-    {
-      "if" : {
-        "device" : {
-          "vendorID" : "0x0",
-          "category" : "trackpad",
-          "productID" : "0x0",
-          "productName" : "Apple Internal Keyboard \/ Trackpad"
-        }
-      },
-      "pointer" : {
-        "acceleration" : 0.5,
-        "disableAcceleration" : true
+      "pointer": {
+        "acceleration": 0.5,
+        "disableAcceleration": true
       }
     }
   ]

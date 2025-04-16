@@ -19,6 +19,15 @@
     agenix.darwinModules.default
   ];
 
+  # All of my macOS systems are running Determinate or Lix, both of which have
+  # decided that the build group should have this Mac-friendly ID.
+  #
+  # But I think nix-darwin still expects the standard NixOS group ID of 30000?
+  # Kinda feels like this should be fixed there since this is becoming standard,
+  # and that in the meantime this might ideally be set per-host, but realistically
+  # I'm not going to be using vanilla nix any time soon, so we'll just set it here.
+  ids.gids.nixbld = 350;
+
   # Setup user, packages, programs
   nix = {
     package = pkgs.nix;

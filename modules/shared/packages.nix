@@ -10,6 +10,10 @@ with pkgs;
   # Languages
   rustup # Rust programming language
 
+  # Databases
+  sqlite # Single-threaded file-based database
+  pgcli # PostgreSQL command line interface
+
   # General packages for development and system management
   silver-searcher # Nice search tool
   aspell # Spell checker
@@ -21,7 +25,6 @@ with pkgs;
   killall # Kill processes by name
   neofetch # System info
   openssh # Secure shell
-  sqlite # Single-threaded file-based database
   zip # Compress files
   graphite-cli # Graphite (friendly git stacking) command line interface
 
@@ -56,8 +59,7 @@ with pkgs;
   # nodejs
 
   # Text and terminal utilities
-  # xsv # CSV toolkit which nixpkgs no longer supports due to lack of maintenance? what maintenance does it need?
-  xan # alternative CSV toolkit which nixpkgs recommended. no idea if good
+  xan # CSV viewing, querying, joining, etc
   hunspell
   # jetbrains-mono
   jq

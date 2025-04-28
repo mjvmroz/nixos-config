@@ -6,6 +6,7 @@ with pkgs;
   nixfmt-rfc-style # Opinionated Nix style
   nil # Nix language server
   devenv # Toolchain for project-specific development environments
+  nix-output-monitor # Prettify builds with pipes
 
   # Languages
   rustup # Rust programming language

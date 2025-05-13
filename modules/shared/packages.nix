@@ -7,6 +7,7 @@ with pkgs;
   nil # Nix language server
   devenv # Toolchain for project-specific development environments
   nix-output-monitor # Prettify builds with pipes
+  cachix # Binary cache for Nix
 
   # Languages
   rustup # Rust programming language

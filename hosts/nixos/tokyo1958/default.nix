@@ -50,10 +50,64 @@ in
             STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
           };
 
-          # GPU issues with Hyprland :(
-          # wayland.windowManager.hyprland = {
-          #   enable = true;
-          # };
+          # GPU issues with Hyprland - now with NVIDIA fixes
+          wayland.windowManager.hyprland = {
+            enable = true;
+            systemd.enable = true;
+            xwayland.enable = true;
+            
+            # NVIDIA-specific configuration
+            extraConfig = ''
+              # Monitor configuration
+              monitor=,preferred,auto,1
+              
+              # Set environment variables for NVIDIA
+              env = XCURSOR_SIZE,24
+              env = WLR_NO_HARDWARE_CURSORS,1
+              
+              # For all categories, see https://wiki.hyprland.org/Configuring/Variables/
+              input {
+                  kb_layout = us
+                  follow_mouse = 1
+                  touchpad {
+                      natural_scroll = false
+                  }
+                  sensitivity = 0
+              }
+              
+              general {
+                  gaps_in = 5
+                  gaps_out = 10
+                  border_size = 2
+                  col.active_border = rgba(33ccffee) rgba(00ff99ee) 45deg
+                  col.inactive_border = rgba(595959aa)
+                  layout = dwindle
+              }
+              
+              # NVIDIA-specific performance tweaks
+              env = LIBVA_DRIVER_NAME,nvidia
+              env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+              
+              # Animation configuration (lower for better performance on NVIDIA)
+              animations {
+                  enabled = true
+                  bezier = myBezier, 0.05, 0.9, 0.1, 1.05
+                  animation = windows, 1, 3, myBezier
+                  animation = windowsOut, 1, 3, default, popin 80%
+                  animation = fade, 1, 3, default
+                  animation = workspaces, 1, 2, default
+              }
+              
+              dwindle {
+                  pseudotile = true
+                  preserve_split = true
+              }
+              
+              # Window rules for specific applications
+              windowrulev2 = opacity 0.95 0.95,class:^(firefox)$
+              windowrulev2 = opacity 0.98 0.98,class:^(Code)$
+            '';
+          };
 
           enableNixpkgsReleaseCheck = false;
           packages = pkgs.callPackage ../../../modules/nixos/packages.nix { };
@@ -205,6 +259,8 @@ in
       # make sure to also set the portal package, so that they are in sync
       portalPackage = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
       xwayland.enable = true;
+      # NVIDIA-specific configuration options
+      enableNvidiaPatches = true;
     };
   };
 
@@ -257,11 +313,19 @@ in
   };
 
   environment.sessionVariables = {
-    WLR_RENDERER_ALLOW_SOFTWARE = "1"; # Fallback if needed
+    # Wayland/Hyprland NVIDIA variables
+    LIBVA_DRIVER_NAME = "nvidia";
+    XDG_SESSION_TYPE = "wayland";
     GBM_BACKEND = "nvidia-drm"; # Use NVIDIA's GBM
     __GLX_VENDOR_LIBRARY_NAME = "nvidia"; # Ensure OpenGL uses NVIDIA
-    # WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card";  # Force NVIDIA GPU
-    # WLR_NO_HARDWARE_CURSORS = "1";  # Workaround for cursor rendering issues
-    # AQ_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card:/dev/dri/by-path/pci-0000:6c:00.0-card";
+    WLR_NO_HARDWARE_CURSORS = "1";  # Fix cursor rendering issues
+    XCURSOR_SIZE = "24";
+    # Additional Hyprland/NVIDIA fixes
+    # Sometimes needed for correct GPU detection
+    WLR_DRM_DEVICES = "/dev/dri/card0";
+    # Hardware acceleration for video decode
+    VDPAU_DRIVER = "nvidia";
+    # Prevent flickering in some applications
+    NIXOS_OZONE_WL = "1";
   };
 }

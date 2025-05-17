@@ -36,7 +36,6 @@
 
   # Direct log output to $XDG_DATA_HOME/postgresql for debugging.
   launchd.user.agents.postgresql.serviceConfig = {
-    # Un-comment these values instead to avoid a home-manager dependency.
     StandardErrorPath = "/Users/${identity.user}/.local/share/postgresql/postgres.error.log";
     StandardOutPath = "/Users/${identity.user}/.local/share/postgresql/postgres.out.log";
   };

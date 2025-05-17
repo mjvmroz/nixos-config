@@ -12,10 +12,9 @@
 
 {
   imports = [
-    ../../modules/darwin/security.nix
     ../../modules/darwin/home-manager.nix
     ../../modules/darwin/postgres.nix
-    ../../modules/shared/cachix
+    ../../modules/shared/security
     ../../modules/shared
     agenix.darwinModules.default
   ];

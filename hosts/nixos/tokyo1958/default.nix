@@ -79,7 +79,7 @@ in
   };
 
   imports = [
-    ../../../modules/shared/cachix
+    ../../../modules/shared/security
     ./hardware-configuration.nix
   ];
 

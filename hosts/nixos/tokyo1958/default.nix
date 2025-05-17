@@ -32,7 +32,7 @@ in
       }:
       {
         imports = [
-          ../../../modules/shared/mroz-shell.nix
+          ../../../modules/home/mroz-shell.nix
         ];
 
         home = {

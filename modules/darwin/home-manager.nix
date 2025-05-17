@@ -72,7 +72,7 @@ in
             additionalFiles
           ];
 
-          stateVersion = "23.11";
+          stateVersion = "24.05";
 
           mrozShell = {
             enable = true;
@@ -83,7 +83,6 @@ in
             };
           };
 
-          # Fully declarative dock using the latest from Nix Store
           dock = {
             enable = true;
             entries = [

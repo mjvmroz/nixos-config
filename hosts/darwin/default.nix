@@ -86,6 +86,13 @@
     # should.
     stateVersion = 4;
 
+    # Previously, some nix-darwin options applied to the user running
+    # `darwin-rebuild`. As part of a long‐term migration to make
+    # nix-darwin focus on system‐wide activation and support first‐class
+    # multi‐user setups, all system activation now runs as `root`, and
+    # these options instead apply to the `system.primaryUser` user.
+    primaryUser = identity.user;
+
     defaults = {
       NSGlobalDomain = {
         AppleShowAllExtensions = true;

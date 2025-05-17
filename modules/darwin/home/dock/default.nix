@@ -9,29 +9,30 @@
 
 with lib;
 let
-  cfg = config.local.dock;
-  inherit (pkgs) stdenv dockutil;
+  cfg = config.home.dock;
+  inherit (pkgs) dockutil;
 in
 {
   options = {
-    local.dock.enable = mkOption {
-      description = "Enable dock";
-      default = stdenv.isDarwin;
-      example = false;
+    home.dock.enable = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Enable dock management via Home Manager.";
+      example = true;
     };
 
-    local.dock.entries = mkOption {
+    home.dock.entries = mkOption {
       description = "Entries on the Dock";
       type =
         with types;
         listOf (submodule {
           options = {
-            path = lib.mkOption { type = str; };
-            section = lib.mkOption {
+            path = mkOption { type = str; };
+            section = mkOption {
               type = str;
               default = "apps";
             };
-            options = lib.mkOption {
+            options = mkOption {
               type = str;
               default = "";
             };
@@ -81,14 +82,14 @@ in
       ) cfg.entries;
     in
     {
-      system.activationScripts.postUserActivation.text = ''
+      home.activation.dock = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         echo >&2 "Setting up the Dock..."
         haveURIs="$(${dockutil}/bin/dockutil --list | ${pkgs.coreutils}/bin/cut -f2)"
         if ! diff -wu <(echo -n "$haveURIs") <(echo -n '${wantURIs}') >&2 ; then
           echo >&2 "Resetting Dock."
           ${dockutil}/bin/dockutil --no-restart --remove all
           ${createEntries}
-          killall Dock
+          ${pkgs.killall}/bin/killall Dock
         else
           echo >&2 "Dock setup complete."
         fi

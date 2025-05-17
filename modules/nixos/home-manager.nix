@@ -8,13 +8,6 @@
 
 let
   xdg_configHome = "/home/${identity.user}/.config";
-  shared-programs = import ../shared/home-manager.nix {
-    inherit
-      config
-      pkgs
-      lib
-      ;
-  };
   shared-files = import ../shared/files.nix { inherit config pkgs; };
 
   polybar-user_modules = builtins.readFile (
@@ -40,13 +33,26 @@ let
 
 in
 {
+  imports = [
+    ../shared/home-manager.nix
+  ];
+
   home = {
     enableNixpkgsReleaseCheck = false;
-    username = "${identity.user}";
+    username = identity.user;
     homeDirectory = "/home/${identity.user}";
     packages = pkgs.callPackage ./packages.nix { };
     file = shared-files // import ./files.nix { inherit identity; };
     stateVersion = "21.05";
+
+    mrozShell = {
+      enable = true;
+      identity = {
+        name = identity.name;
+        email = identity.email;
+        signingKey = identity.signingKey;
+      };
+    };
   };
 
   # Use a dark theme
@@ -127,7 +133,7 @@ in
     };
   };
 
-  programs = shared-programs // {
+  programs = {
     gpg.enable = true;
   };
 

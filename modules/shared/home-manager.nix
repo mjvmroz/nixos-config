@@ -3,12 +3,37 @@
   config,
   pkgs,
   lib,
-  onePassAgentPath,
-  gpgSshProgram,
   ...
 }:
 
+with lib;
+let
+  cfg = config.mrozShell;
+  onePass =
+    if pkgs.stdenv.hostPlatform.isLinux then
+      {
+        sshAgentSock = "~/.1password/agent.sock";
+        gpgProgram = lib.getExe' pkgs._1password-gui "op-ssh-sign";
+      }
+    else if pkgs.stdenv.hostPlatform.isDarwin then
+      {
+        sshAgentSock = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+        gpgProgram = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+      }
+    else
+      throw "Unsupported platform for 1Password agent socket";
+in
 {
+  # TODO: Implement this as a hm module
+  # options.mrozShell = {
+  #   enable = mkOption {
+  #     type = types.bool;
+  #     default = false;
+  #     description = "Enable Michael Mroz's shell configuration.";
+  #     example = true;
+  #   };
+  # };
+
   # Shared shell configuration
   zsh = {
     enable = true;
@@ -129,7 +154,7 @@
         exa --tree --color=always $1 | less
       }
 
-      export SSH_AUTH_SOCK=$(expand_tilde "${onePassAgentPath}")
+      export SSH_AUTH_SOCK=$(expand_tilde "${onePass.sshAgentSock}")
 
       bindkey '^[[1;9D' beginning-of-line
       bindkey '^[[1;9C' end-of-line
@@ -188,7 +213,7 @@
       };
       user.signingkey = identity.signingKey;
       gpg.format = "ssh";
-      gpg.ssh.program = gpgSshProgram;
+      gpg.ssh.program = onePass.gpgProgram;
       commit.gpgsign = true;
       pull.rebase = true;
       rebase.autoStash = true;
@@ -333,7 +358,7 @@
       (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${identity.user}/.ssh/config_external")
     ];
     extraConfig = ''
-      IdentityAgent "${onePassAgentPath}"
+      IdentityAgent "${onePass.sshAgentSock}"
     '';
 
   };

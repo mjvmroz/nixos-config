@@ -61,7 +61,7 @@ in
       {
         imports = [
           ./home/dock
-          ../shared/home-manager.nix
+          ../shared/mroz-shell.nix
         ];
 
         home = {

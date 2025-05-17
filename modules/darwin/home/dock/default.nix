@@ -82,6 +82,11 @@ in
       ) cfg.entries;
     in
     {
+      home.packages = with pkgs; [
+        killall
+        coreutils
+        dockutil
+      ];
       home.activation.dock = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         echo >&2 "Setting up the Dock..."
         haveURIs="$(${dockutil}/bin/dockutil --list | ${pkgs.coreutils}/bin/cut -f2)"

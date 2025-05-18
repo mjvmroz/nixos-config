@@ -11,6 +11,7 @@ shared-packages
 
   # Gaming
   protonup
+  pciutils # GPU debugging
 
   # App and package management
   # appimage-run

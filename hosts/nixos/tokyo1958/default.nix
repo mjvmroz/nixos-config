@@ -33,6 +33,7 @@ in
       {
         imports = [
           ../../../modules/home/mroz-shell.nix
+          ../../../modules/home/nixos-wofi.nix
         ];
 
         home = {

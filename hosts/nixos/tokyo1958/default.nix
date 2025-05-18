@@ -51,7 +51,6 @@ in
             STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
           };
 
-          # GPU issues with Hyprland :(
           # wayland.windowManager.hyprland = {
           #   enable = true;
           # };
@@ -62,20 +61,6 @@ in
             sharedFiles
             # additionalFiles
           ];
-        };
-
-        systemd.user.services._1password-gui = {
-          Unit = {
-            Description = "1Password GUI";
-            After = [ "graphical-session-pre.target" ];
-          };
-          Service = {
-            ExecStart = "${pkgs._1password-gui}/bin/1password --silent";
-            Restart = "on-failure";
-          };
-          Install = {
-            WantedBy = [ "graphical-session.target" ];
-          };
         };
 
         programs = {
@@ -93,6 +78,7 @@ in
   };
 
   imports = [
+    ../../../modules/nixos/security.nix
     ../../../modules/shared/security
     ./hardware-configuration.nix
   ];
@@ -190,17 +176,7 @@ in
     # Needed for anything GTK related
     dconf.enable = true;
 
-    # My shell
     zsh.enable = true;
-
-    # 1Password is my agent of choice for SSH and GPG
-    _1password.enable = true;
-    _1password-gui = {
-      enable = true;
-      # Certain features, including CLI integration and system authentication support,
-      # require enabling PolKit integration on some desktop environments (e.g. Plasma).
-      polkitPolicyOwners = [ identity.user ];
-    };
 
     steam = {
       enable = true;

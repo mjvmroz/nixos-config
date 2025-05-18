@@ -106,6 +106,5 @@ in
     vulkan-tools
     glxinfo
     libva-utils # VA-API debugging tools
-    nvidia_x11
   ];
 }

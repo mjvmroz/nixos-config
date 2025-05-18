@@ -130,9 +130,9 @@ in
       }:
       {
         imports = [
+          ../../../modules/home/nixos/cursor.nix
+          ../../../modules/home/nixos/wofi.nix
           ../../../modules/home/mroz-shell.nix
-          ../../../modules/home/nixos-cursor.nix
-          ../../../modules/home/nixos-wofi.nix
         ];
 
         home = {
@@ -224,9 +224,6 @@ in
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
-  # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = [ "nvidia" ];
-
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
@@ -239,7 +236,7 @@ in
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "25.05"; # Did you read the comment?
 
   nix.settings = {
     experimental-features = [

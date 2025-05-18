@@ -9,10 +9,6 @@
   hyprland,
   ...
 }:
-
-let
-  pkgs-unstable = hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")

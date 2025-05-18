@@ -9,7 +9,6 @@
 }:
 
 let
-  # Using beta driver for recent GPUs like RTX 4070
   nvidiaDriverChannel = config.boot.kernelPackages.nvidiaPackages.beta;
 in
 {

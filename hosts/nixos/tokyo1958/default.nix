@@ -76,7 +76,6 @@ in
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  # services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -152,10 +151,6 @@ in
             STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
           };
 
-          # wayland.windowManager.hyprland = {
-          #   enable = true;
-          # };
-
           enableNixpkgsReleaseCheck = false;
           packages = pkgs.callPackage ../../../modules/nixos/packages.nix { };
           file = lib.mkMerge [
@@ -171,6 +166,9 @@ in
           ghostty = {
             enable = true;
             package = pkgs.ghostty;
+          };
+          kitty = {
+            enable = true;
           };
         };
 
@@ -197,9 +195,9 @@ in
     hyprland = {
       enable = true;
       # set the flake package
-      package = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      package = hyprland.packages.${pkgs.system}.hyprland;
       # make sure to also set the portal package, so that they are in sync
-      portalPackage = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      portalPackage = hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
       xwayland.enable = true;
     };
   };

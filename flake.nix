@@ -32,7 +32,6 @@
     nixos-unified.url = "github:srid/nixos-unified";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
-    opnix.url = "github:brizzbuzz/opnix";
   };
   outputs =
     {
@@ -49,7 +48,6 @@
       nixos-unified,
       treefmt-nix,
       hyprland,
-      opnix,
     }@inputs:
     let
       identity = {
@@ -104,7 +102,6 @@
             modules = [
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
-              opnix.nixosModules.default
               hosts/darwin
             ];
           }
@@ -118,7 +115,6 @@
             modules = [
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
-              opnix.nixosModules.default
               hosts/darwin
               {
                 networking.hostName = "sapporo";
@@ -137,7 +133,6 @@
             modules = [
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
-              opnix.nixosModules.default
               hosts/darwin
               {
                 networking.hostName = "chomusuke";
@@ -154,7 +149,6 @@
           };
           modules = [
             home-manager.nixosModules.home-manager
-            opnix.nixosModules.default
             hosts/nixos/tokyo1958
           ];
         };

@@ -20,11 +20,11 @@ let
 in
 {
   imports = [
+    ./hardware-configuration.nix
     home-manager.nixosModules.home-manager
     stylix.nixosModules.stylix
     ../../../modules/nixos/security.nix
     ../../../modules/shared/security
-    ./hardware-configuration.nix
   ];
 
   # Bootloader.

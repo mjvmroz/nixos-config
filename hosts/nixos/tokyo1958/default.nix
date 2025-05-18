@@ -132,6 +132,7 @@ in
       {
         imports = [
           ../../../modules/home/mroz-shell.nix
+          ../../../modules/home/nixos-cursor.nix
           ../../../modules/home/nixos-wofi.nix
         ];
 

@@ -1,4 +1,9 @@
-{pkgs, identity, ...}:
+{
+  pkgs,
+  identity,
+  lib,
+  ...
+}:
 {
   config = {
     home-manager.users.${identity.user} = {
@@ -27,5 +32,9 @@
         polkitPolicyOwners = [ identity.user ];
       };
     };
+
+    security.sudo.enable = true;
+    security.pam.services.swaylock = { };
+    security.pam.services.hyprlock = { };
   };
 }

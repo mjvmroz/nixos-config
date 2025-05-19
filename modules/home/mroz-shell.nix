@@ -23,6 +23,7 @@ let
       throw "Unsupported platform for 1Password agent socket";
 in
 {
+
   options = {
     home.mrozShell.enable = mkOption {
       type = types.bool;

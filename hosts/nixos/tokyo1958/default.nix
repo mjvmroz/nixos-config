@@ -8,6 +8,8 @@
   lib,
   identity,
   hyprland,
+  home-manager,
+  stylix,
   ...
 }:
 let
@@ -17,70 +19,12 @@ let
   keys = [ identity.sshKey ];
 in
 {
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = {
-      inherit identity;
-    };
-    users.${identity.user} =
-      {
-        pkgs,
-        config,
-        lib,
-        ...
-      }:
-      {
-        imports = [
-          ../../../modules/home/mroz-shell.nix
-        ];
-
-        home = {
-          stateVersion = "25.05";
-
-          mrozShell = {
-            enable = true;
-            identity = {
-              name = identity.name;
-              email = identity.email;
-              signingKey = identity.signingKey;
-            };
-          };
-
-          sessionVariables = {
-            STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
-          };
-
-          # wayland.windowManager.hyprland = {
-          #   enable = true;
-          # };
-
-          enableNixpkgsReleaseCheck = false;
-          packages = pkgs.callPackage ../../../modules/nixos/packages.nix { };
-          file = lib.mkMerge [
-            sharedFiles
-            # additionalFiles
-          ];
-        };
-
-        programs = {
-          vscode = {
-            enable = true;
-          };
-          ghostty = {
-            enable = true;
-            package = pkgs.ghostty;
-          };
-        };
-
-        manual.manpages.enable = true;
-      };
-  };
-
   imports = [
+    ./hardware-configuration.nix
+    home-manager.nixosModules.home-manager
+    stylix.nixosModules.stylix
     ../../../modules/nixos/security.nix
     ../../../modules/shared/security
-    ./hardware-configuration.nix
   ];
 
   # Bootloader.
@@ -132,7 +76,6 @@ in
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  # services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -172,6 +115,67 @@ in
     };
   };
 
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = {
+      inherit identity;
+    };
+    users.${identity.user} =
+      {
+        pkgs,
+        config,
+        lib,
+        ...
+      }:
+      {
+        imports = [
+          ../../../modules/home/nixos/cursor.nix
+          ../../../modules/home/nixos/wofi.nix
+          ../../../modules/home/mroz-shell.nix
+        ];
+
+        home = {
+          stateVersion = "25.05";
+
+          mrozShell = {
+            enable = true;
+            identity = {
+              name = identity.name;
+              email = identity.email;
+              signingKey = identity.signingKey;
+            };
+          };
+
+          sessionVariables = {
+            STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+          };
+
+          enableNixpkgsReleaseCheck = false;
+          packages = pkgs.callPackage ../../../modules/nixos/packages.nix { };
+          file = lib.mkMerge [
+            sharedFiles
+            # additionalFiles
+          ];
+        };
+
+        programs = {
+          vscode = {
+            enable = true;
+          };
+          ghostty = {
+            enable = true;
+            package = pkgs.ghostty;
+          };
+          kitty = {
+            enable = true;
+          };
+        };
+
+        manual.manpages.enable = true;
+      };
+  };
+
   programs = {
     # Needed for anything GTK related
     dconf.enable = true;
@@ -191,9 +195,9 @@ in
     hyprland = {
       enable = true;
       # set the flake package
-      package = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      package = hyprland.packages.${pkgs.system}.hyprland;
       # make sure to also set the portal package, so that they are in sync
-      portalPackage = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      portalPackage = hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
       xwayland.enable = true;
     };
   };
@@ -220,9 +224,6 @@ in
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
-  # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = [ "nvidia" ];
-
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
@@ -235,21 +236,12 @@ in
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "25.05"; # Did you read the comment?
 
   nix.settings = {
     experimental-features = [
       "nix-command"
       "flakes"
     ];
-  };
-
-  environment.sessionVariables = {
-    WLR_RENDERER_ALLOW_SOFTWARE = "1"; # Fallback if needed
-    GBM_BACKEND = "nvidia-drm"; # Use NVIDIA's GBM
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia"; # Ensure OpenGL uses NVIDIA
-    # WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card";  # Force NVIDIA GPU
-    WLR_NO_HARDWARE_CURSORS = "1"; # Workaround for cursor rendering issues
-    # AQ_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card:/dev/dri/by-path/pci-0000:6c:00.0-card";
   };
 }

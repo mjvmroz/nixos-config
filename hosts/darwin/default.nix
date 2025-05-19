@@ -69,7 +69,7 @@
     # compatible, in order to avoid breaking some software such as database
     # servers. You should change this only after NixOS release notes say you
     # should.
-    stateVersion = 24.05;
+    stateVersion = 4;
 
     # Previously, some nix-darwin options applied to the user running
     # `darwin-rebuild`. As part of a long‐term migration to make

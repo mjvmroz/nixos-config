@@ -13,6 +13,7 @@
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     ../../../modules/nixos/nvidia.nix
+    ../../../modules/nixos/gaming.nix
   ];
 
   boot.initrd.availableKernelModules = [

@@ -8,6 +8,7 @@ _:
   "visual-studio-code" # Code Editor
   "cursor" # Code editor with advanced AI features
   "zed" # Code Editor
+  "neovide" # Modern GUI for neovim
   "texifier" # LaTeX Editor
   "texstudio" # LaTeX Editor
 

@@ -1,5 +1,9 @@
 _: {
-  environment.variables.STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+  home-manager.sharedModules = [
+    {
+      home.sessionVariables.STEAM_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+    }
+  ];
 
   programs.steam = {
     enable = true;

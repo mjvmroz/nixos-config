@@ -15,6 +15,6 @@
   };
 
   home.sessionVariables = {
-    XCURSOR_SIZE = "32"; # X11 scales differently to Wayland ;_;
+    XCURSOR_SIZE = "16"; # X11 scales differently to Wayland ;_;
   };
 }

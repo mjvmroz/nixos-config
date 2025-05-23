@@ -6,13 +6,13 @@
   lib,
   pkgs,
   modulesPath,
-  hyprland,
   ...
 }:
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     ../../../modules/nixos/hardware/nvidia.nix
+    ../../../modules/nixos/hardware/samsung-odyssey.nix
   ];
 
   boot.initrd.availableKernelModules = [

@@ -1,7 +1,7 @@
 {
   description = "mroz.env";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05"; # Pinned, waiting on a home-manager release
     agenix.url = "github:ryantm/agenix";
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";

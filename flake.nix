@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
-      url = "github:LnL7/nix-darwin/master";
+      url = "github:LnL7/nix-darwin/nix-darwin-25.05"; # Pinned, waiting on a home-manager release
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew = {

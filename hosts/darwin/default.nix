@@ -14,6 +14,7 @@
     ../../modules/darwin/home-manager.nix
     ../../modules/darwin/postgres.nix
     ../../modules/shared/security
+    ../../modules/shared/fonts.nix
     ../../modules/shared
     agenix.darwinModules.default
   ];

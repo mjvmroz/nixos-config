@@ -2,10 +2,19 @@
   pkgs,
   identity,
   lib,
+  config,
   ...
 }:
+with lib;
 {
-  config = {
+  options = {
+    mroz.security.enable = mkEnableOption {
+      default = false;
+      description = "Enable Mroz's security configuration, including 1Password-based secrets management";
+    };
+  };
+
+  config = lib.mkIf config.mroz.security.enable {
     home-manager.sharedModules = [
       {
         systemd.user.services._1password-gui = {

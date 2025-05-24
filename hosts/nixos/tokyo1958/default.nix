@@ -18,6 +18,8 @@ in
 {
   imports = [
     ./hardware-configuration.nix
+    ../../../modules/nixos/hardware/nvidia.nix
+    ../../../modules/nixos/hardware/samsung-odyssey.nix
     home-manager.nixosModules.home-manager
     stylix.nixosModules.stylix
     ../../../modules/nixos/security.nix
@@ -27,6 +29,9 @@ in
     ../../../modules/nixos/hyprland.nix
     ../../../modules/nixos/audio.nix
   ];
+
+  mroz-hardware.nvidia.enable = true;
+  mroz-hardware.samsung-odyssey.enable = true;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;

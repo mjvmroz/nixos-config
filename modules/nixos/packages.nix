@@ -66,4 +66,6 @@ shared-packages
 
   # Music and entertainment
   spotify
+
+  code-cursor
 ]

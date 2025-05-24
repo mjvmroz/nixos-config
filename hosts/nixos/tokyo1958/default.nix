@@ -17,19 +17,7 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    ../../../modules/nixos/hardware/nvidia.nix
-    ../../../modules/nixos/hardware/samsung-odyssey.nix
-    inputs.home-manager.nixosModules.home-manager
-    inputs.stylix.nixosModules.stylix
-    ../../../modules/nixos/core.nix
-    ../../../modules/nixos/x11.nix
-    ../../../modules/nixos/localization.nix
-    ../../../modules/nixos/security.nix
-    ../../../modules/shared/security
-    ../../../modules/shared/fonts.nix
-    ../../../modules/nixos/gaming.nix
-    ../../../modules/nixos/hyprland.nix
-    ../../../modules/nixos/audio.nix
+    ../../../modules/nixos
   ];
 
   # Bootloader.
@@ -52,10 +40,6 @@ in
       extraGroups = [
         "networkmanager"
         "wheel"
-      ];
-      packages = with pkgs; [
-        code-cursor
-        discord-ptb
       ];
       shell = pkgs.zsh;
       openssh.authorizedKeys.keys = keys;

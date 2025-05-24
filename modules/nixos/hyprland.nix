@@ -28,8 +28,6 @@ in
       xwayland.enable = true;
     };
 
-    services.xserver.enable = true; # Might need this for Xwayland
-
     environment.systemPackages = with pkgs; [
       kitty # Terminal (Hyprland's default, pays to keep it around)
       waybar # Status bar

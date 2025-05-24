@@ -22,6 +22,7 @@ in
     ../../../modules/nixos/hardware/samsung-odyssey.nix
     home-manager.nixosModules.home-manager
     stylix.nixosModules.stylix
+    ../../../modules/nixos/core.nix
     ../../../modules/nixos/security.nix
     ../../../modules/shared/security
     ../../../modules/shared/fonts.nix
@@ -30,14 +31,20 @@ in
     ../../../modules/nixos/audio.nix
   ];
 
-  mroz.hardware.samsung-odyssey.enable = true;
-  mroz.security.enable = true;
-
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "tokyo1958"; # Define your hostname.
+
+  # Set this to the NixOS release at the time of the first install.
+  system.stateVersion = "25.05";
+
+  mroz.hardware.samsung-odyssey.enable = true;
+  mroz.security.enable = true;
+
+  # Set your time zone.
+  time.timeZone = "America/Los_Angeles";
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -46,9 +53,6 @@ in
 
   # Enable networking
   networking.networkmanager.enable = true;
-
-  # Set your time zone.
-  time.timeZone = "America/Los_Angeles";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -157,55 +161,5 @@ in
 
         manual.manpages.enable = true;
       };
-  };
-
-  programs = {
-    # Needed for anything GTK related
-    dconf.enable = true;
-
-    zsh.enable = true;
-  };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget
-    git
-    # Gaming
-    mangohud
-    protonup
-    lutris
-    heroic
-    bottles
-  ];
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It's perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
-
-  nix.settings = {
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
   };
 }

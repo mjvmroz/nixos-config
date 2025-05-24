@@ -12,6 +12,4 @@
     layout = "us";
     variant = "";
   };
-
-  services.xserver.libinput.enable = true;
 }

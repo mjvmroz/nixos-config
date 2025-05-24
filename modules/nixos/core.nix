@@ -28,13 +28,9 @@
     git
   ];
 
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-
-  # Enable CUPS to print documents.
   services.printing.enable = true;
+  services.libinput.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

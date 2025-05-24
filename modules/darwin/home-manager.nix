@@ -8,7 +8,6 @@
 }:
 
 let
-  sharedFiles = import ../shared/files.nix { inherit config pkgs; };
   additionalFiles = import ./files.nix { inherit identity config pkgs; };
 in
 {
@@ -68,13 +67,12 @@ in
           enableNixpkgsReleaseCheck = false;
           packages = pkgs.callPackage ./packages.nix { };
           file = lib.mkMerge [
-            sharedFiles
             additionalFiles
           ];
 
           stateVersion = "24.05";
 
-          mrozShell = {
+          mroz.shell = {
             enable = true;
             identity = {
               name = identity.name;

@@ -7,7 +7,7 @@
 
 with lib;
 let
-  cfg = config.home.mrozShell;
+  cfg = config.home.mroz.shell;
   onePass =
     if pkgs.stdenv.hostPlatform.isLinux then
       {
@@ -25,26 +25,26 @@ in
 {
 
   options = {
-    home.mrozShell.enable = mkOption {
+    home.mroz.shell.enable = mkOption {
       type = types.bool;
       default = false;
       description = "Enable Michael Mroz's shell configuration.";
       example = true;
     };
 
-    home.mrozShell.identity.name = mkOption {
+    home.mroz.shell.identity.name = mkOption {
       type = types.str;
       description = "Git user name.";
       example = "Your Name";
     };
 
-    home.mrozShell.identity.email = mkOption {
+    home.mroz.shell.identity.email = mkOption {
       type = types.str;
       description = "Git user email.";
       example = "your@email.com";
     };
 
-    home.mrozShell.identity.signingKey = mkOption {
+    home.mroz.shell.identity.signingKey = mkOption {
       type = types.str;
       description = "Git signing key.";
       example = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJRQgKmvXGkbgTLFTCT0gtm6/fojgXcJhfcvNW2n6+WB";

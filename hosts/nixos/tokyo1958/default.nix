@@ -65,8 +65,7 @@ in
       }:
       {
         imports = [
-          ../../../modules/home/nixos/cursor.nix
-          ../../../modules/home/nixos/wofi.nix
+          ../../../modules/home/nixos
           ../../../modules/home/mroz-shell.nix
         ];
 

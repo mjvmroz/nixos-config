@@ -116,7 +116,7 @@ in
           gloga = "git log --oneline --decorate --graph --all";
           cf = "code $(fzf)";
           "c." = "code .";
-          dr = "direnv reload";
+          dr = "ndr-universal";
           da = "direnv allow";
           cb = "cabal build";
           ccb = "cabal clean && cabal build";
@@ -171,6 +171,14 @@ in
 
           tree () {
             exa --tree --color=always $1 | less
+          }
+
+          ndr-universal() {
+            if command -v nix-direnv-reload >/dev/null 2>&1; then
+              nix-direnv-reload "$@"
+            else
+              direnv reload "$@"
+            fi
           }
 
           export SSH_AUTH_SOCK=$(expand_tilde "${onePass.sshAgentSock}")

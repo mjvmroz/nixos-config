@@ -119,7 +119,7 @@ in
           dr = "ndr-universal";
           da = "direnv allow";
           cb = "cabal build";
-          ccb = "cabal clean && cabal build";
+          cr = "cabal-reset";
         };
         cdpath = [ "~/.local/share/src" ];
         initContent = lib.mkBefore ''
@@ -179,6 +179,23 @@ in
             else
               direnv reload "$@"
             fi
+          }
+
+          # Hard-reset and rebuild the current project
+          cabal-reset() {
+            rm -rf dist-newstyle            # remove every cached artefact
+            cabal clean -v0                 # wipe local component dirs
+            cabal build  "$@"               # full recompilation
+          }
+
+          # Remove cache for the package dependencies given as arguments.
+          # This is a targeted alternative to `cabal-reset`, and might be
+          # flaky but might also save time in some extreme cases.
+          # Usage: cabal-prune <package1> <package2> ...
+          cabal-prune() {
+            for pkg in "$@"; do
+              find dist-newstyle -type d -name "$${pkg}-*" -prune -exec rm -rf {} +
+            done
           }
 
           export SSH_AUTH_SOCK=$(expand_tilde "${onePass.sshAgentSock}")

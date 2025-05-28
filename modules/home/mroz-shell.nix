@@ -120,6 +120,7 @@ in
           da = "direnv allow";
           cb = "cabal build";
           cr = "cabal-reset";
+          ns = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history"; # Search Nix packages with nix-search-tv
         };
         cdpath = [ "~/.local/share/src" ];
         initContent = lib.mkBefore ''

@@ -18,7 +18,6 @@ with pkgs;
 
   # General packages for development and system management
   silver-searcher # Nice search tool
-  carapace
   aspell # Spell checker
   aspellDicts.en # English dictionary
   bash-completion # Better bash completion

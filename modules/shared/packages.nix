@@ -11,6 +11,7 @@ with pkgs;
 
   # Languages
   rustup # Rust programming language
+  haskellPackages.ghcitui # Haskell command line interface wrapper
 
   # Databases
   sqlite # Single-threaded file-based database

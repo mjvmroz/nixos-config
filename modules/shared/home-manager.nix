@@ -56,6 +56,7 @@
       la = "exa -la";
       gl = "git pull";
       gp = "git push";
+      gco = "git checkout";
       cat = "bat";
       top = "btop";
       # At some point I should update these. I've been carrying them around since bailing on OMZ an eon ago.

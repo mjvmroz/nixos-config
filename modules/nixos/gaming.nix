@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 
 with lib;
 let
@@ -27,5 +32,14 @@ in
     };
 
     programs.gamemode.enable = true;
+
+    environment.systemPackages = with pkgs; [
+      mangohud
+      protonup
+      lutris
+      heroic
+      bottles
+      pciutils
+    ];
   };
 }

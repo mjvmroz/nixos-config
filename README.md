@@ -49,5 +49,5 @@ Finally, cut over to the new Nix:
 ### For NixOS
 
 ```sh
-./switch.sh # I think it's that easy??
+sudo nixos-rebuild switch --flake .
 ```

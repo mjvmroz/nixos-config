@@ -60,8 +60,8 @@ in
       }:
       {
         imports = [
-          ./home/dock
-          ../shared/mroz-shell.nix
+          ../home/darwin-dock.nix
+          ../home/mroz-shell.nix
         ];
 
         home = {

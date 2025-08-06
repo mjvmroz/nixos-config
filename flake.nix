@@ -110,7 +110,7 @@
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
               opnix.nixosModules.default
-              ./hosts/darwin
+              hosts/darwin
             ];
           }
         )

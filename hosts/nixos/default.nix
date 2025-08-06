@@ -1,15 +1,16 @@
 {
+  identity,
   config,
   inputs,
   pkgs,
   agenix,
+  lib,
   ...
 }:
 
 let
-  user = "mroz";
   # This one is 1Password-managed
-  keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJRQgKmvXGkbgTLFTCT0gtm6/fojgXcJhfcvNW2n6+WB" ];
+  keys = [ identity.sshKey ];
 in
 {
   imports = [
@@ -54,26 +55,17 @@ in
   };
 
   nix = {
-    nixPath = [ "nixos-config=/home/${user}/.local/share/src/nixos-config:/etc/nixos" ];
-    settings = {
-      allowed-users = [ "${user}" ];
-      trusted-users = [
-        "@admin"
-        "${user}"
-      ];
-      substituters = [
-        "https://nix-community.cachix.org"
-        "https://cache.nixos.org"
-        "https://mroz.cachix.org"
-        "https://cache.mercury.com"
-      ];
-      trusted-public-keys = [
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-        "mroz.cachix.org-1:yHi4Z+V6BviriR92yRIKFSfo6QR2LBSH7/YALi/f6vQ="
-        "cache.mercury.com:yhfFlgvqtv0cAxzflJ0aZW3mbulx4+5EOZm6k3oML+I="
-      ];
-    };
+    nixPath = [ "nixos-config=/home/${identity.user}/.local/share/src/nixos-config:/etc/nixos" ];
+    settings = lib.mkMerge [
+      (import ../../modules/shared/cachix)
+      {
+        allowed-users = [ "${identity.user}" ];
+        trusted-users = [
+          "@admin"
+          "${identity.user}"
+        ];
+      }
+    ];
 
     package = pkgs.nix;
     extraOptions = ''
@@ -137,9 +129,9 @@ in
     syncthing = {
       enable = true;
       openDefaultPorts = true;
-      dataDir = "/home/${user}/.local/share/syncthing";
-      configDir = "/home/${user}/.config/syncthing";
-      user = "${user}";
+      dataDir = "/home/${identity.user}/.local/share/syncthing";
+      configDir = "/home/${identity.user}/.config/syncthing";
+      user = "${identity.user}";
       group = "users";
       guiAddress = "127.0.0.1:8384";
       overrideFolders = true;
@@ -289,7 +281,7 @@ in
 
   # It's me, it's you, it's everyone
   users.users = {
-    ${user} = {
+    ${identity.user} = {
       isNormalUser = true;
       extraGroups = [
         "wheel" # Enable ‘sudo’ for the user.

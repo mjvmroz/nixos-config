@@ -34,12 +34,16 @@ in
     programs.gamemode.enable = true;
 
     environment.systemPackages = with pkgs; [
+      # Core
       mangohud
       protonup
       lutris
       heroic
       bottles
       pciutils
+
+      # Apps
+      discord-ptb
     ];
   };
 }

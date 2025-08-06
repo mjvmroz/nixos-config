@@ -121,11 +121,6 @@
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
               hosts/darwin
-              {
-                # Sussy about this. Doesn't seem like it should be necessary.
-                # Check this with `dscacheutil -q group | grep nixbld -B 3`
-                ids.gids.nixbld = 350;
-              }
             ];
           };
           chomusuke = darwin.lib.darwinSystem {

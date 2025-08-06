@@ -9,15 +9,11 @@ shared-packages
   # System packages
   tailscale # Private VPN
 
-  # Security and authentication
-  yubikey-agent
-  keepassxc
-
   # App and package management
-  appimage-run
-  gnumake
-  cmake
-  home-manager
+  # appimage-run
+  # gnumake
+  # cmake
+  # home-manager
 
   # Media and design tools
   vlc
@@ -25,19 +21,19 @@ shared-packages
   font-manager
 
   # Productivity tools
-  bc # old school calculator
-  galculator
+  # bc # old school calculator
+  # galculator
 
   # Audio tools
   cava # Terminal audio visualizer
-  pavucontrol # Pulse audio controls
+  # pavucontrol # Pulse audio controls
 
   # Testing and development tools
-  direnv
-  rofi
-  rofi-calc
+  # direnv
+  # rofi
+  # rofi-calc
   postgresql
-  libtool # for Emacs vterm
+  # libtool # for Emacs vterm
 
   # Screenshot and recording tools
   flameshot

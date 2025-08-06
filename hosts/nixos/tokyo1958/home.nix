@@ -1,7 +1,16 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, lib, identity, onePassAgentPath, gpgSshProgram, ... }:
 
 let
-  onePassPath = "~/.1password/agent.sock";
+  shared-programs = import ../../../modules/shared/home-manager.nix {
+    inherit
+      config
+      pkgs
+      lib
+      onePassAgentPath
+      identity
+      gpgSshProgram
+      ;
+  };
 in {
   home.stateVersion = "25.05";
 
@@ -13,13 +22,7 @@ in {
     STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
   };
 
-  programs.ssh = {
-    enable = true;
-    extraConfig = ''
-      Host *
-          IdentityAgent ${onePassPath}
-    '';
-  };
+  programs = shared-programs;
 
   # GPU issues with Hyprland :(
   # wayland.windowManager.hyprland = {

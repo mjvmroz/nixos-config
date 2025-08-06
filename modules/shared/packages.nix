@@ -57,7 +57,8 @@ with pkgs;
   # nodejs
 
   # Text and terminal utilities
-  xsv # CSV toolkit
+  # xsv # CSV toolkit which nixpkgs no longer supports due to lack of maintenance? what maintenance does it need?
+  xan # alternative CSV toolkit which nixpkgs recommended. no idea if good
   hunspell
   # jetbrains-mono
   jq

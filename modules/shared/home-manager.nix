@@ -232,7 +232,7 @@
       set showcmd
       set hidden
       set wildmenu
-      set wildmode=list:longest
+      set wildmode=list:longest,list:full
       set cursorline
       set ttyfast
       set nowrap

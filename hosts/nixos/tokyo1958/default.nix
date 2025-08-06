@@ -73,7 +73,7 @@ in
         home = {
           stateVersion = "25.05";
 
-          mrozShell = {
+          mroz.shell = {
             enable = true;
             identity = {
               name = identity.name;

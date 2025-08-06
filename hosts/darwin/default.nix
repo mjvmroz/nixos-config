@@ -1,11 +1,9 @@
 {
   identity,
-  agenix,
   config,
   pkgs,
   lib,
-  homebrew-core,
-  homebrew-cask,
+  inputs,
   ...
 }:
 
@@ -13,10 +11,8 @@
   imports = [
     ../../modules/darwin/home-manager.nix
     ../../modules/darwin/postgres.nix
-    ../../modules/shared/security
-    ../../modules/shared/fonts.nix
     ../../modules/shared
-    agenix.darwinModules.default
+    inputs.agenix.darwinModules.default
   ];
 
   # Setup user, packages, programs
@@ -47,8 +43,8 @@
     user = identity.user;
     enable = true;
     taps = {
-      "homebrew/homebrew-core" = homebrew-core;
-      "homebrew/homebrew-cask" = homebrew-cask;
+      "homebrew/homebrew-core" = inputs.homebrew-core;
+      "homebrew/homebrew-cask" = inputs.homebrew-cask;
     };
     mutableTaps = false;
     autoMigrate = true;
@@ -61,7 +57,7 @@
   environment.systemPackages =
     with pkgs;
     [
-      agenix.packages."${pkgs.system}".default
+      inputs.agenix.packages."${pkgs.system}".default
     ]
     ++ (import ../../modules/shared/packages.nix { inherit pkgs; });
 

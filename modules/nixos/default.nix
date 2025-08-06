@@ -10,7 +10,7 @@
     ./localization.nix
     ./security.nix
     ../shared/security
-    ../shared/fonts.nix
+    ../shared
     ./gaming.nix
     ./hyprland.nix
     ./audio.nix

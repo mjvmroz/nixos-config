@@ -39,6 +39,16 @@ Finally, cut over to the new Nix:
 ./switch.sh
 ```
 
+Or alternatively (WIP)
+
+```sh
+# First time:
+nix run nix-darwin -- switch --flake .
+
+# Subsequent times:
+nix-darwin switch --flake .
+```
+
 #### Manual steps:
 
 - **iTerm2**: Preferences -> General -> Preferences -> Load preferences from a custom folder or URL:

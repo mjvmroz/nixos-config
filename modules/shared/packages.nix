@@ -33,6 +33,9 @@ with pkgs;
   graphite-cli # Graphite (friendly git stacking) command line interface
   nix-search-tv # Search for Nix packages
 
+  # Diagramming
+  graphviz # Graphviz dot language + tools
+
   # Network
   wget # Download files
   httpie # HTTP client

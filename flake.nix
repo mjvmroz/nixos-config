@@ -121,6 +121,13 @@
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
               hosts/darwin
+              {
+                networking.hostName = "sapporo";
+                # TODO: clean this up. This machine now uses Determinate Nix, which
+                #       doesn't permit nix-darwin to manage the installation itself.
+                nix.enable = false;
+                nix.gc.automatic = nixpkgs.lib.mkForce false;
+              }
             ];
           };
           chomusuke = darwin.lib.darwinSystem {
@@ -132,6 +139,9 @@
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
               hosts/darwin
+              {
+                networking.hostName = "chomusuke";
+              }
             ];
           };
         };

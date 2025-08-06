@@ -33,7 +33,6 @@
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
     stylix.url = "github:nix-community/stylix";
-
   };
   outputs =
     {

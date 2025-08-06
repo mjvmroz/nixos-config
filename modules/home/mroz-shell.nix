@@ -115,7 +115,8 @@ in
           glog = "git log --oneline --decorate --graph";
           gloga = "git log --oneline --decorate --graph --all";
           cf = "code $(fzf)";
-          "c." = "code .";
+          "c." = "cursor .";
+          "co." = "code .";
           dr = "ndr-universal";
           da = "direnv allow";
           cb = "cabal build";

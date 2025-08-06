@@ -34,7 +34,7 @@ let
 in
 {
   imports = [
-    ../shared/home-manager.nix
+    ../shared/mroz-shell.nix
   ];
 
   home = {

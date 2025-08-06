@@ -59,7 +59,7 @@ in
       }:
       {
         imports = [
-          ../home/darwin/dock.nix
+          ../home/darwin
           ../home/mroz-shell.nix
         ];
 

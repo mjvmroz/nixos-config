@@ -70,4 +70,7 @@ with pkgs;
   tmux
   # unrar
   # unzip
+
+  # AI tools
+  claude-code
 ]

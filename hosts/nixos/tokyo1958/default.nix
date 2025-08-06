@@ -18,13 +18,9 @@ let
       config
       pkgs
       lib
-      onePassAgentPath
-      gpgSshProgram
       identity
       ;
   };
-  onePassAgentPath = "~/.1password/agent.sock";
-  gpgSshProgram = lib.getExe' pkgs._1password-gui "op-ssh-sign";
   # This one is 1Password-managed
   keys = [ identity.sshKey ];
 in

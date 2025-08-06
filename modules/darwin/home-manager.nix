@@ -10,8 +10,6 @@
 let
   sharedFiles = import ../shared/files.nix { inherit config pkgs; };
   additionalFiles = import ./files.nix { inherit identity config pkgs; };
-  onePassAgentPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
-  gpgSshProgram = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
 in
 {
   # It me
@@ -111,8 +109,6 @@ in
               config
               pkgs
               lib
-              onePassAgentPath
-              gpgSshProgram
               ;
           };
       };

@@ -92,6 +92,9 @@
       # Remove history data we don't want to see
       export HISTIGNORE="pwd:ls:cd"
 
+      # nix-direnv makes this warning a virtual certainty, and I know about ctrl-c
+      export DIRENV_WARN_TIMEOUT=100y
+
       # nix shortcuts
       shell() {
         nix-shell '<nixpkgs>' -A "$1"

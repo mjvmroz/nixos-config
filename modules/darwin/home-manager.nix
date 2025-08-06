@@ -1,4 +1,5 @@
 {
+  identity,
   config,
   pkgs,
   lib,
@@ -7,9 +8,8 @@
 }:
 
 let
-  user = "mroz";
   sharedFiles = import ../shared/files.nix { inherit config pkgs; };
-  additionalFiles = import ./files.nix { inherit user config pkgs; };
+  additionalFiles = import ./files.nix { inherit identity config pkgs; };
   onePassAgentPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
   gpgSshProgram = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
 in
@@ -19,9 +19,9 @@ in
   ];
 
   # It me
-  users.users.${user} = {
-    name = "${user}";
-    home = "/Users/${user}";
+  users.users.${identity.user} = {
+    name = "${identity.user}";
+    home = "/Users/${identity.user}";
     isHidden = false;
     shell = pkgs.zsh;
   };
@@ -55,7 +55,7 @@ in
   # Enable home-manager
   home-manager = {
     useGlobalPkgs = true;
-    users.${user} =
+    users.${identity.user} =
       {
         pkgs,
         config,
@@ -77,6 +77,7 @@ in
           { }
           // import ../shared/home-manager.nix {
             inherit
+              identity
               config
               pkgs
               lib
@@ -104,7 +105,7 @@ in
         { path = "/Applications/Visual Studio Code.app/"; }
         { path = "/Applications/Spotify.app/"; }
         {
-          path = "${config.users.users.${user}.home}/Downloads";
+          path = "${config.users.users.${identity.user}.home}/Downloads";
           section = "others";
           options = "--view fan --display stack";
         }

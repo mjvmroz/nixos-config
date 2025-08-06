@@ -50,7 +50,11 @@
       treefmt-nix,
     }@inputs:
     let
-      user = "mroz";
+      identity = {
+        name = "Michael Mroz";
+        email = "michael@mroz.io";
+        user = "mroz";
+      };
       linuxSystems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -113,13 +117,15 @@
         system:
         darwin.lib.darwinSystem {
           inherit system;
-          specialArgs = inputs;
+          specialArgs = inputs // {
+            inherit identity;
+          };
           modules = [
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             {
               nix-homebrew = {
-                inherit user;
+                user = identity.user;
                 enable = true;
                 taps = {
                   "homebrew/homebrew-core" = homebrew-core;
@@ -139,7 +145,9 @@
         system:
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = inputs;
+          specialArgs = inputs // {
+            inherit identity;
+          };
           modules = [
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
@@ -147,7 +155,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                users.${user} = import ./modules/nixos/home-manager.nix;
+                users.${identity.user} = import ./modules/nixos/home-manager.nix { inherit identity; };
               };
             }
             ./hosts/nixos

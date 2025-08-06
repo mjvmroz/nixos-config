@@ -1,14 +1,14 @@
 {
-  user,
+  identity,
   config,
   pkgs,
   ...
 }:
 
 let
-  xdg_configHome = "${config.users.users.${user}.home}/.config";
-  xdg_dataHome = "${config.users.users.${user}.home}/.local/share";
-  xdg_stateHome = "${config.users.users.${user}.home}/.local/state";
+  xdg_configHome = "${config.users.users.${identity.user}.home}/.config";
+  xdg_dataHome = "${config.users.users.${identity.user}.home}/.local/share";
+  xdg_stateHome = "${config.users.users.${identity.user}.home}/.local/state";
 in
 {
 

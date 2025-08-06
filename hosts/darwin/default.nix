@@ -1,16 +1,12 @@
 {
+  identity,
   agenix,
   config,
   pkgs,
   ...
 }:
 
-let
-  user = "mroz";
-in
-
 {
-
   imports = [
     ../../modules/darwin/security.nix
     ../../modules/darwin/home-manager.nix
@@ -27,7 +23,7 @@ in
     settings = {
       trusted-users = [
         "@admin"
-        "${user}"
+        "${identity.user}"
       ];
       substituters = [
         "https://nix-community.cachix.org"

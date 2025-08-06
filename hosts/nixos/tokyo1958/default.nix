@@ -2,7 +2,14 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running 'nixos-help').
 
-{ config, pkgs, lib, identity, hyprland, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  identity,
+  hyprland,
+  ...
+}:
 let
   pkgs-unstable = hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
   sharedFiles = import ../../../modules/shared/files.nix { inherit config pkgs; };
@@ -20,7 +27,8 @@ let
   gpgSshProgram = lib.getExe' pkgs._1password-gui "op-ssh-sign";
   # This one is 1Password-managed
   keys = [ identity.sshKey ];
-in {
+in
+{
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
@@ -67,10 +75,9 @@ in {
       };
   };
 
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -144,10 +151,13 @@ in {
     mroz = {
       isNormalUser = true;
       description = "Michael Mroz";
-      extraGroups = [ "networkmanager" "wheel" ];
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+      ];
       packages = with pkgs; [
         code-cursor
-      #  thunderbird
+        #  thunderbird
       ];
       shell = pkgs.zsh;
       openssh.authorizedKeys.keys = keys;
@@ -217,7 +227,7 @@ in {
   services.openssh.enable = true;
 
   # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -234,15 +244,18 @@ in {
   system.stateVersion = "24.11"; # Did you read the comment?
 
   nix.settings = {
-    substituters = ["https://hyprland.cachix.org"];
-    trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
-    experimental-features = [ "nix-command" "flakes" ];
+    substituters = [ "https://hyprland.cachix.org" ];
+    trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 
   environment.sessionVariables = {
-    WLR_RENDERER_ALLOW_SOFTWARE = "1";  # Fallback if needed
-    GBM_BACKEND = "nvidia-drm";  # Use NVIDIA's GBM
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";  # Ensure OpenGL uses NVIDIA
+    WLR_RENDERER_ALLOW_SOFTWARE = "1"; # Fallback if needed
+    GBM_BACKEND = "nvidia-drm"; # Use NVIDIA's GBM
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia"; # Ensure OpenGL uses NVIDIA
     # WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card";  # Force NVIDIA GPU
     # WLR_NO_HARDWARE_CURSORS = "1";  # Workaround for cursor rendering issues
     # AQ_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card:/dev/dri/by-path/pci-0000:6c:00.0-card";

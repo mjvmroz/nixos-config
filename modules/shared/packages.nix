@@ -9,6 +9,9 @@ with pkgs;
   nixfmt-rfc-style # Opinionated Nix style
   nil # Nix language server
 
+  # Languages
+  rustup # Rust programming language
+
   # General packages for development and system management
   alacritty # Terminal emulator
   silver-searcher # Nice search tool

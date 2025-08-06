@@ -10,8 +10,8 @@ _:
   # Communication Tools
   # "discord"
   # "notion"
-  # "slack"
-  # "zoom"
+  "slack"
+  "zoom"
 
   # Utilities
   "syncthing" # File Sync

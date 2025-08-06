@@ -6,6 +6,8 @@ let
 in
 shared-packages
 ++ [
+  # System packages
+  tailscale # Private VPN
 
   # Security and authentication
   yubikey-agent

@@ -67,6 +67,10 @@ in
           vscode = {
             enable = true;
           };
+          ghostty = {
+            enable = true;
+            package = pkgs.ghostty;
+          };
         };
 
         # Marked broken Oct 20, 2022 check later to remove this

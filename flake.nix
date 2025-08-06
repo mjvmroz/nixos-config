@@ -32,6 +32,7 @@
     nixos-unified.url = "github:srid/nixos-unified";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+    stylix.url = "github:nix-community/stylix";
   };
   outputs =
     {
@@ -48,6 +49,7 @@
       nixos-unified,
       treefmt-nix,
       hyprland,
+      stylix,
     }@inputs:
     let
       identity = {
@@ -97,11 +99,12 @@
           darwin.lib.darwinSystem {
             inherit system;
             specialArgs = inputs // {
-              inherit identity;
+              inherit identity inputs;
             };
             modules = [
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
+              stylix.darwinModules.stylix
               hosts/darwin
             ];
           }
@@ -110,11 +113,12 @@
           sapporo = darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             specialArgs = inputs // {
-              inherit identity;
+              inherit identity inputs;
             };
             modules = [
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
+              stylix.darwinModules.stylix
               hosts/darwin
               {
                 networking.hostName = "sapporo";
@@ -128,11 +132,12 @@
           chomusuke = darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             specialArgs = inputs // {
-              inherit identity;
+              inherit identity inputs;
             };
             modules = [
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
+              stylix.darwinModules.stylix
               hosts/darwin
               {
                 networking.hostName = "chomusuke";
@@ -145,10 +150,9 @@
         tokyo1958 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = inputs // {
-            inherit identity;
+            inherit identity inputs;
           };
           modules = [
-            home-manager.nixosModules.home-manager
             hosts/nixos/tokyo1958
           ];
         };

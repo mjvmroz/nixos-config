@@ -66,7 +66,7 @@ in
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
-    package32 = pkgs-unstable.pkgsi686Linux.mesa.drivers;
+    package32 = pkgs-unstable.pkgsi686Linux.mesa;
   };
 
   hardware.nvidia = {

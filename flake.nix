@@ -97,11 +97,9 @@
         }/bin/${scriptName}";
       };
       mkLinuxApps = system: {
-        "apply" = mkApp "apply" system;
         "build-switch" = mkApp "build-switch" system;
       };
       mkDarwinApps = system: {
-        "apply" = mkApp "apply" system;
         "build" = mkApp "build" system;
         "build-switch" = mkApp "build-switch" system;
         "rollback" = mkApp "rollback" system;

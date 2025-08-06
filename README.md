@@ -31,7 +31,7 @@ Let Apple know that we'd like to use the computer:
 xcode-select --install
 ```
 
-And then install Nix. I use the Determinate Systems distribution since I ~~support the military-industrial complex~~ like things to work:
+And then install Nix. I mostly use the Determinate Systems distribution:
 
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
@@ -41,10 +41,10 @@ Finally, cut over to the new Nix:
 
 ```sh
 # First time:
-nix run nix-darwin -- switch --flake .
+sudo nix run nix-darwin -- switch --flake .
 
 # Subsequent times:
-nix-darwin switch --flake .
+sudo nix-darwin switch --flake .
 ```
 
 #### Manual steps:

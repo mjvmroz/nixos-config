@@ -66,8 +66,8 @@
       glgga = "git log --graph --decorate --all";
       glgm = "git log --graph --max-count 10";
       glo = "git log --oneline --decorate";
-      glol = "git log --graph --pretty format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-      glola = "git log --graph --pretty format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all";
+      glol = "git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+      glola = "git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all";
       glog = "git log --oneline --decorate --graph";
       gloga = "git log --oneline --decorate --graph --all";
       cf = "code $(fzf)";

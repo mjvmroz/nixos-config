@@ -1,14 +1,14 @@
 {
   description = "mroz.env";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05"; # Pinned, waiting on a home-manager release
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     agenix.url = "github:ryantm/agenix";
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-25.05"; # Pinned, waiting on a home-manager release
+      url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew = {

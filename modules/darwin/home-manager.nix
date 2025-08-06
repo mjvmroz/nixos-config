@@ -50,6 +50,7 @@ in
 
     masApps = {
       Tailscale = 1475387142;
+      AppleConfigurator = 1037126344;
     };
   };
 

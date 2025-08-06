@@ -16,6 +16,7 @@ _:
   # Utilities
   "syncthing" # File Sync
   "1password" # Password Manager
+  "1password-cli" # Terminal integration for 1Password
   "chatgpt" # Know things
   "ollama" # Know things less good but less internetly
 
@@ -29,4 +30,7 @@ _:
   # Browsers
   "google-chrome" # Evil. I should switch to Firefox. But hassle.
   "firefox@developer-edition"
+
+  # Global DBs
+  "postico"
 ]

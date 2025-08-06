@@ -8,6 +8,8 @@
   lib,
   identity,
   hyprland,
+  home-manager,
+  stylix,
   ...
 }:
 let
@@ -17,68 +19,9 @@ let
   keys = [ identity.sshKey ];
 in
 {
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    extraSpecialArgs = {
-      inherit identity;
-    };
-    users.${identity.user} =
-      {
-        pkgs,
-        config,
-        lib,
-        ...
-      }:
-      {
-        imports = [
-          ../../../modules/home/mroz-shell.nix
-          ../../../modules/home/nixos-wofi.nix
-        ];
-
-        home = {
-          stateVersion = "25.05";
-
-          mrozShell = {
-            enable = true;
-            identity = {
-              name = identity.name;
-              email = identity.email;
-              signingKey = identity.signingKey;
-            };
-          };
-
-          sessionVariables = {
-            STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
-          };
-
-          # wayland.windowManager.hyprland = {
-          #   enable = true;
-          # };
-
-          enableNixpkgsReleaseCheck = false;
-          packages = pkgs.callPackage ../../../modules/nixos/packages.nix { };
-          file = lib.mkMerge [
-            sharedFiles
-            # additionalFiles
-          ];
-        };
-
-        programs = {
-          vscode = {
-            enable = true;
-          };
-          ghostty = {
-            enable = true;
-            package = pkgs.ghostty;
-          };
-        };
-
-        manual.manpages.enable = true;
-      };
-  };
-
   imports = [
+    home-manager.nixosModules.home-manager
+    stylix.nixosModules.stylix
     ../../../modules/nixos/security.nix
     ../../../modules/shared/security
     ./hardware-configuration.nix
@@ -173,6 +116,67 @@ in
     };
   };
 
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = {
+      inherit identity;
+    };
+    users.${identity.user} =
+      {
+        pkgs,
+        config,
+        lib,
+        ...
+      }:
+      {
+        imports = [
+          ../../../modules/home/mroz-shell.nix
+          ../../../modules/home/nixos-wofi.nix
+        ];
+
+        home = {
+          stateVersion = "25.05";
+
+          mrozShell = {
+            enable = true;
+            identity = {
+              name = identity.name;
+              email = identity.email;
+              signingKey = identity.signingKey;
+            };
+          };
+
+          sessionVariables = {
+            STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+          };
+
+          # wayland.windowManager.hyprland = {
+          #   enable = true;
+          # };
+
+          enableNixpkgsReleaseCheck = false;
+          packages = pkgs.callPackage ../../../modules/nixos/packages.nix { };
+          file = lib.mkMerge [
+            sharedFiles
+            # additionalFiles
+          ];
+        };
+
+        programs = {
+          vscode = {
+            enable = true;
+          };
+          ghostty = {
+            enable = true;
+            package = pkgs.ghostty;
+          };
+        };
+
+        manual.manpages.enable = true;
+      };
+  };
+
   programs = {
     # Needed for anything GTK related
     dconf.enable = true;
@@ -243,14 +247,5 @@ in
       "nix-command"
       "flakes"
     ];
-  };
-
-  environment.sessionVariables = {
-    WLR_RENDERER_ALLOW_SOFTWARE = "1"; # Fallback if needed
-    GBM_BACKEND = "nvidia-drm"; # Use NVIDIA's GBM
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia"; # Ensure OpenGL uses NVIDIA
-    # WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card";  # Force NVIDIA GPU
-    WLR_NO_HARDWARE_CURSORS = "1"; # Workaround for cursor rendering issues
-    # AQ_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card:/dev/dri/by-path/pci-0000:6c:00.0-card";
   };
 }

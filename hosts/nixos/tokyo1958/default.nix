@@ -13,8 +13,6 @@
   ...
 }:
 let
-  pkgs-unstable = hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-  sharedFiles = import ../../../modules/shared/files.nix { inherit config pkgs; };
   # This one is 1Password-managed
   keys = [ identity.sshKey ];
 in
@@ -147,16 +145,8 @@ in
             };
           };
 
-          sessionVariables = {
-            STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
-          };
-
           enableNixpkgsReleaseCheck = false;
           packages = pkgs.callPackage ../../../modules/nixos/packages.nix { };
-          file = lib.mkMerge [
-            sharedFiles
-            # additionalFiles
-          ];
         };
 
         programs = {
@@ -181,16 +171,6 @@ in
     dconf.enable = true;
 
     zsh.enable = true;
-
-    steam = {
-      enable = true;
-      remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-      dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
-      localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
-      gamescopeSession.enable = true;
-    };
-
-    gamemode.enable = true;
 
     hyprland = {
       enable = true;

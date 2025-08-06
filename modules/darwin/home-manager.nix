@@ -10,7 +10,8 @@ let
   user = "mroz";
   sharedFiles = import ../shared/files.nix { inherit config pkgs; };
   additionalFiles = import ./files.nix { inherit user config pkgs; };
-  onePassPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+  onePassAgentPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+  gpgSshProgram = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
 in
 {
   imports = [
@@ -73,7 +74,7 @@ in
 
           stateVersion = "23.11";
         };
-        programs = { } // import ../shared/home-manager.nix { inherit config pkgs lib onePassPath; };
+        programs = { } // import ../shared/home-manager.nix { inherit config pkgs lib onePassAgentPath gpgSshProgram; };
 
         # Marked broken Oct 20, 2022 check later to remove this
         # https://github.com/nix-community/home-manager/issues/3344

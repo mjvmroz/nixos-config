@@ -1,8 +1,6 @@
 { config, inputs, pkgs, agenix, ... }:
 
 let user = "mroz";
-    # This is the one I manually registered
-    # keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
     # This one is 1Password-managed
     keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJRQgKmvXGkbgTLFTCT0gtm6/fojgXcJhfcvNW2n6+WB" ];
  in {

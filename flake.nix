@@ -141,6 +141,7 @@
               hosts/darwin
               {
                 networking.hostName = "chomusuke";
+                ids.gids.nixbld = 350;
               }
             ];
           };

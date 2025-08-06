@@ -3,7 +3,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     agenix.url = "github:ryantm/agenix";
-    home-manager.url = "github:nix-community/home-manager";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     darwin = {
       url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,6 +30,7 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hyprland.url = "github:hyprwm/Hyprland";
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     nixos-unified.url = "github:srid/nixos-unified";
@@ -48,6 +52,7 @@
       flake-parts,
       nixos-unified,
       treefmt-nix,
+      hyprland,
     }@inputs:
     let
       identity = {
@@ -161,6 +166,25 @@
             ./hosts/nixos
           ];
         }
-      );
+      ) // {
+        tokyo1958 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit inputs;
+            inherit identity;
+          };
+          modules = [
+            hosts/nixos/tokyo1958/configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.${identity.user} = {
+                imports = [ hosts/nixos/tokyo1958/home.nix ];
+              };
+            }
+          ];
+        };
+      };
     };
 }

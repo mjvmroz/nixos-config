@@ -7,7 +7,6 @@
   pkgs,
   lib,
   identity,
-  hyprland,
   home-manager,
   stylix,
   ...
@@ -25,6 +24,8 @@ in
     ../../../modules/shared/security
     ../../../modules/shared/fonts.nix
     ../../../modules/nixos/gaming.nix
+    ../../../modules/nixos/hyprland.nix
+    ../../../modules/nixos/audio.nix
   ];
 
   # Bootloader.
@@ -74,21 +75,6 @@ in
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
-
-  # Enable sound with pipewire.
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -173,15 +159,6 @@ in
     dconf.enable = true;
 
     zsh.enable = true;
-
-    hyprland = {
-      enable = true;
-      # set the flake package
-      package = hyprland.packages.${pkgs.system}.hyprland;
-      # make sure to also set the portal package, so that they are in sync
-      portalPackage = hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
-      xwayland.enable = true;
-    };
   };
 
   # Allow unfree packages

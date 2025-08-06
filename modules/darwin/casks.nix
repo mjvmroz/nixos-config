@@ -5,6 +5,7 @@ _:
   "iterm2" # Terminal emulator
   "homebrew/cask/docker" # Containerization
   "visual-studio-code" # Code Editor
+  "cursor" # Code editor with advanced AI features
   "zed" # Code Editor
   "texifier" # LaTeX Editor
   "texstudio" # LaTeX Editor

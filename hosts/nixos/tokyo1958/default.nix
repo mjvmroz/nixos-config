@@ -145,7 +145,7 @@ in
             };
           };
 
-          enableNixpkgsReleaseCheck = false;
+          enableNixpkgsReleaseCheck = true;
           packages = pkgs.callPackage ../../../modules/nixos/packages.nix { };
         };
 

@@ -6,21 +6,23 @@
 }:
 {
   config = {
-    home-manager.users.${identity.user} = {
-      systemd.user.services._1password-gui = {
-        Unit = {
-          Description = "1Password GUI";
-          After = [ "graphical-session-pre.target" ];
+    home-manager.sharedModules = [
+      {
+        systemd.user.services._1password-gui = {
+          Unit = {
+            Description = "1Password GUI";
+            After = [ "graphical-session-pre.target" ];
+          };
+          Service = {
+            ExecStart = "${pkgs._1password-gui}/bin/1password --silent";
+            Restart = "on-failure";
+          };
+          Install = {
+            WantedBy = [ "graphical-session.target" ];
+          };
         };
-        Service = {
-          ExecStart = "${pkgs._1password-gui}/bin/1password --silent";
-          Restart = "on-failure";
-        };
-        Install = {
-          WantedBy = [ "graphical-session.target" ];
-        };
-      };
-    };
+      }
+    ];
 
     programs = {
       # 1Password is my agent of choice for SSH and GPG

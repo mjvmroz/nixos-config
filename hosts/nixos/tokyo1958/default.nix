@@ -249,7 +249,7 @@ in
     GBM_BACKEND = "nvidia-drm"; # Use NVIDIA's GBM
     __GLX_VENDOR_LIBRARY_NAME = "nvidia"; # Ensure OpenGL uses NVIDIA
     # WLR_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card";  # Force NVIDIA GPU
-    # WLR_NO_HARDWARE_CURSORS = "1";  # Workaround for cursor rendering issues
+    WLR_NO_HARDWARE_CURSORS = "1"; # Workaround for cursor rendering issues
     # AQ_DRM_DEVICES = "/dev/dri/by-path/pci-0000:01:00.0-card:/dev/dri/by-path/pci-0000:6c:00.0-card";
   };
 }

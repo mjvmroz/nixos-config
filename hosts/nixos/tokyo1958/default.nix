@@ -157,7 +157,7 @@ in
       ];
       packages = with pkgs; [
         code-cursor
-        #  thunderbird
+        discord-ptb
       ];
       shell = pkgs.zsh;
       openssh.authorizedKeys.keys = keys;

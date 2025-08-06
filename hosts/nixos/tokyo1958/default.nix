@@ -23,6 +23,8 @@ in
     stylix.nixosModules.stylix
     ../../../modules/nixos/security.nix
     ../../../modules/shared/security
+    ../../../modules/nixos/fonts.nix
+    ../../../modules/nixos/gaming.nix
   ];
 
   # Bootloader.

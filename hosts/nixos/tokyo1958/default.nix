@@ -64,6 +64,20 @@ in
           ];
         };
 
+        systemd.user.services._1password-gui = {
+          Unit = {
+            Description = "1Password GUI";
+            After = [ "graphical-session-pre.target" ];
+          };
+          Service = {
+            ExecStart = "${pkgs._1password-gui}/bin/1password --silent";
+            Restart = "on-failure";
+          };
+          Install = {
+            WantedBy = [ "graphical-session.target" ];
+          };
+        };
+
         programs = {
           vscode = {
             enable = true;
@@ -152,9 +166,9 @@ in
 
   # Define a user account. Don't forget to set a password with 'passwd'.
   users.users = {
-    mroz = {
+    ${identity.user} = {
       isNormalUser = true;
-      description = "Michael Mroz";
+      description = identity.name;
       extraGroups = [
         "networkmanager"
         "wheel"
@@ -185,7 +199,7 @@ in
       enable = true;
       # Certain features, including CLI integration and system authentication support,
       # require enabling PolKit integration on some desktop environments (e.g. Plasma).
-      polkitPolicyOwners = [ "mroz" ];
+      polkitPolicyOwners = [ identity.user ];
     };
 
     steam = {

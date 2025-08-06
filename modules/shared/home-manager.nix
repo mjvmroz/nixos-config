@@ -73,7 +73,6 @@ in
       glola = "git log --graph --pretty format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all";
       glog = "git log --oneline --decorate --graph";
       gloga = "git log --oneline --decorate --graph --all";
-      ##### Not managed by Home Manager #####
       cf = "code $(fzf)";
       "c." = "code .";
     };
@@ -94,13 +93,29 @@ in
 
       # nix shortcuts
       shell() {
-          nix-shell '<nixpkgs>' -A "$1"
+        nix-shell '<nixpkgs>' -A "$1"
       }
 
       expand_tilde() {
-          tilde_less="''${1#\~/}"
-          [ "$1" != "$tilde_less" ] && tilde_less="$HOME/$tilde_less"
-          printf '%s' "$tilde_less"
+        tilde_less="''${1#\~/}"
+        [ "$1" != "$tilde_less" ] && tilde_less="$HOME/$tilde_less"
+        printf '%s' "$tilde_less"
+      }
+
+      port_info() {
+        setopt pipefail
+        lsof -i -P | grep LISTEN | grep :$1
+      }
+
+      port_pid() {
+        setopt pipefail
+        port_info $1 | awk '{print $2}'
+      }
+
+
+      port_kill() {
+        setopt pipefail
+        port_pid $1 | xargs kill
       }
 
       export SSH_AUTH_SOCK=$(expand_tilde "${onePassAgentPath}")

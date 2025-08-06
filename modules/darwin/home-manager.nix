@@ -106,7 +106,7 @@ in
         {
           path = "${config.users.users.${user}.home}/Downloads";
           section = "others";
-          options = "--sort name --view grid --display stack";
+          options = "--view fan --display stack";
         }
         # {
         #   path = "${config.users.users.${user}.home}/.local/share/";

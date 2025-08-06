@@ -15,9 +15,6 @@
     agenix.darwinModules.default
   ];
 
-  # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
-
   # Setup user, packages, programs
   nix = {
     package = pkgs.nix;
@@ -32,7 +29,6 @@
     ];
 
     gc = {
-      user = "root";
       automatic = true;
       interval = {
         Weekday = 0;

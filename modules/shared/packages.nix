@@ -29,6 +29,7 @@ with pkgs;
   openssh # Secure shell
   zip # Compress files
   graphite-cli # Graphite (friendly git stacking) command line interface
+  nix-search-tv # Search for Nix packages
 
   # Network
   wget # Download files

@@ -92,9 +92,9 @@ in
       fi
 
       # Define variables for directories
-      export PATH=$HOME/.pnpm-packages/bin:$HOME/.pnpm-packages:$PATH
-      export PATH=$HOME/.npm-packages/bin:$HOME/bin:$PATH
       export PATH=$HOME/.local/share/bin:$PATH
+
+      export LESS="-R -M -i -J -z-4 --mouse"
 
       # Remove history data we don't want to see
       export HISTIGNORE="pwd:ls:cd"
@@ -103,10 +103,6 @@ in
       shell() {
           nix-shell '<nixpkgs>' -A "$1"
       }
-
-      # pnpm is a javascript package manager
-      alias pn=pnpm
-      alias px=pnpx
     '';
   };
 

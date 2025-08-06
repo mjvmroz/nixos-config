@@ -27,7 +27,12 @@ in
   homebrew = {
     enable = true;
     casks = pkgs.callPackage ./casks.nix { };
-    # onActivation.cleanup = "uninstall";
+    taps = builtins.attrNames config.nix-homebrew.taps; # This defaults empty which causes problems with the aggressive nix-based management below
+    onActivation = {
+      autoUpdate = true;
+      cleanup = "uninstall";
+      upgrade = true;
+    };
 
     # These app IDs are from using the mas CLI app
     # mas = mac app store
@@ -79,23 +84,23 @@ in
     dock = {
       enable = true;
       entries = [
+        { path = "/Applications/Google Chrome.app/"; }
         { path = "/System/Applications/Messages.app/"; }
         { path = "/Applications/iTerm.app/"; }
+        { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
+        { path = "/Applications/1Password.app/"; }
         { path = "/Applications/Visual Studio Code.app/"; }
         { path = "/Applications/Spotify.app/"; }
-        { path = "/Applications/1Password.app/"; }
-        { path = "/Applications/Google Chrome.app/"; }
-        { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
         {
-          path = "${config.users.users.${user}.home}/.local/share/";
-          section = "others";
-          options = "--sort name --view grid --display folder";
-        }
-        {
-          path = "${config.users.users.${user}.home}/.local/share/downloads";
+          path = "${config.users.users.${user}.home}/Downloads";
           section = "others";
           options = "--sort name --view grid --display stack";
         }
+        # {
+        #   path = "${config.users.users.${user}.home}/.local/share/";
+        #   section = "others";
+        #   options = "--sort name --view grid --display folder";
+        # }
       ];
     };
   };

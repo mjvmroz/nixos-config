@@ -4,8 +4,8 @@ let user = "mroz";
     # This is the one I manually registered
     # keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
     # This one is 1Password-managed
-    keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJRQgKmvXGkbgTLFTCT0gtm6/fojgXcJhfcvNW2n6+WB" ]; in
-{
+    keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJRQgKmvXGkbgTLFTCT0gtm6/fojgXcJhfcvNW2n6+WB" ];
+ in {
   imports = [
     ../../modules/nixos/secrets.nix
     ../../modules/nixos/disk-config.nix
@@ -46,8 +46,16 @@ let user = "mroz";
     settings = {
       allowed-users = [ "${user}" ];
       trusted-users = [ "@admin" "${user}" ];
-      substituters = [ "https://nix-community.cachix.org" "https://cache.nixos.org" ];
-      trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+      substituters = [
+        "https://nix-community.cachix.org"
+        "https://cache.nixos.org"
+        "https://mroz.cachix.org"
+      ];
+      trusted-public-keys = [
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "mroz.cachix.org-1:yHi4Z+V6BviriR92yRIKFSfo6QR2LBSH7/YALi/f6vQ="
+      ];
     };
 
     package = pkgs.nix;

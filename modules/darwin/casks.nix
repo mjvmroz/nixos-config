@@ -13,9 +13,10 @@ _:
   # "slack"
   # "zoom"
 
-  # Utility Tools
+  # Utilities
   "syncthing" # File Sync
   "1password" # Password Manager
+  "chatgpt" # Know things
 
   # Entertainment Tools
   "iina" # Video Player
@@ -26,4 +27,5 @@ _:
 
   # Browsers
   "google-chrome" # Evil. I should switch to Firefox. But hassle.
+  "firefox@developer-edition"
 ]

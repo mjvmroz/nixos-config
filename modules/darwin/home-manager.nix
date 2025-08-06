@@ -104,6 +104,7 @@ in
         { path = "/Applications/1Password.app/"; }
         { path = "/Applications/Visual Studio Code.app/"; }
         { path = "/Applications/Spotify.app/"; }
+        { path = "/Applications/ChatGPT.app/"; }
         {
           path = "${config.users.users.${identity.user}.home}/Downloads";
           section = "others";

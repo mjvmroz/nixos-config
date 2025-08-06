@@ -14,10 +14,6 @@ let
   gpgSshProgram = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
 in
 {
-  imports = [
-    ./dock
-  ];
-
   # It me
   users.users.${identity.user} = {
     name = "${identity.user}";
@@ -65,6 +61,10 @@ in
         ...
       }:
       {
+        imports = [
+          ./home/dock
+        ];
+
         home = {
           enableNixpkgsReleaseCheck = false;
           packages = pkgs.callPackage ./packages.nix { };
@@ -74,7 +74,35 @@ in
           ];
 
           stateVersion = "23.11";
+
+          # Fully declarative dock using the latest from Nix Store
+          dock = {
+            enable = true;
+            entries = [
+              { path = "/Applications/Google Chrome.app/"; }
+              # TODO: Maybe this is a good case for trying out modules + options?
+              #       I don't want messages to be in the dock on my work machine,
+              #       but I do want it on my personal ones.
+              # { path = "/System/Applications/Messages.app/"; }
+              { path = "/Applications/iTerm.app/"; }
+              { path = "/Applications/1Password.app/"; }
+              { path = "/Applications/Visual Studio Code.app/"; }
+              { path = "/Applications/Spotify.app/"; }
+              { path = "/Applications/ChatGPT.app/"; }
+              {
+                path = "${config.home.homeDirectory}/Downloads";
+                section = "others";
+                options = "--view fan --display stack";
+              }
+              # {
+              #   path = "${config.users.users.${user}.home}/.local/share/";
+              #   section = "others";
+              #   options = "--sort name --view grid --display folder";
+              # }
+            ];
+          };
         };
+
         programs =
           { }
           // import ../shared/home-manager.nix {
@@ -88,34 +116,5 @@ in
               ;
           };
       };
-  };
-
-  # Fully declarative dock using the latest from Nix Store
-  local = {
-    dock = {
-      enable = true;
-      entries = [
-        { path = "/Applications/Google Chrome.app/"; }
-        # TODO: Maybe this is a good case for trying out modules + options?
-        #       I don't want messages to be in the dock on my work machine,
-        #       but I do want it on my personal ones.
-        # { path = "/System/Applications/Messages.app/"; }
-        { path = "/Applications/iTerm.app/"; }
-        { path = "/Applications/1Password.app/"; }
-        { path = "/Applications/Visual Studio Code.app/"; }
-        { path = "/Applications/Spotify.app/"; }
-        { path = "/Applications/ChatGPT.app/"; }
-        {
-          path = "${config.users.users.${identity.user}.home}/Downloads";
-          section = "others";
-          options = "--view fan --display stack";
-        }
-        # {
-        #   path = "${config.users.users.${user}.home}/.local/share/";
-        #   section = "others";
-        #   options = "--sort name --view grid --display folder";
-        # }
-      ];
-    };
   };
 }

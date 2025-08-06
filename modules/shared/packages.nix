@@ -26,6 +26,7 @@ with pkgs;
   openssh # Secure shell
   sqlite # Single-threaded file-based database
   wget # Download files
+  httpie # HTTP client
   zip # Compress files
   graphite-cli # Graphite (friendly git stacking) command line interface
 
@@ -55,7 +56,7 @@ with pkgs;
   # nodejs
 
   # Text and terminal utilities
-  htop
+  xsv # CSV toolkit
   hunspell
   iftop
   # jetbrains-mono

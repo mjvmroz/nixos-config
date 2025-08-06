@@ -58,3 +58,9 @@ nix-darwin switch --flake .
 - **iTerm2**: Preferences > General > Preferences > Load preferences from a custom folder or URL:
   - `~/.config/nix-iterm2` (read-only via nix), or
   - `${thisProject}/modules/darwin/config/nix-iterm` (read-write via git, not controlled by nix)
+
+## Updating
+
+Update Nix flakes with `nix flake update`, then install to apply changes.
+
+On macOS, software managed through brew (mostly casks for graphical apps) should get the latest version on install. I have mutable brew management disabled.

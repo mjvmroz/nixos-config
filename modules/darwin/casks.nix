@@ -19,6 +19,7 @@ _:
   "1password-cli" # Terminal integration for 1Password
   "chatgpt" # Know things
   "ollama" # Know things less good but less internetly
+  "linearmouse" # Mouse acceleration fix
 
   # Entertainment Tools
   "iina" # Video Player

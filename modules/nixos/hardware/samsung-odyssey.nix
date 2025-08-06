@@ -1,11 +1,11 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.mroz-hardware.samsung-odyssey;
+  cfg = config.mroz.hardware.samsung-odyssey;
 in
 {
   options = {
-    mroz-hardware.samsung-odyssey.enable = mkEnableOption {
+    mroz.hardware.samsung-odyssey.enable = mkEnableOption {
       default = false;
       description = "Enable support for the Samsung Odyssey G9 monitor.";
     };

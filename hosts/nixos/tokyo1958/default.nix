@@ -30,8 +30,8 @@ in
     ../../../modules/nixos/audio.nix
   ];
 
-  mroz-hardware.nvidia.enable = true;
-  mroz-hardware.samsung-odyssey.enable = true;
+  mroz.hardware.samsung-odyssey.enable = true;
+  mroz.security.enable = true;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;

@@ -11,12 +11,12 @@
 with lib;
 let
   nvidiaDriverChannel = config.boot.kernelPackages.nvidiaPackages.beta;
-  cfg = config.mroz-hardware.nvidia;
+  cfg = config.mroz.hardware.nvidia;
 in
 {
   options = {
     # Enable Nvidia driver
-    mroz-hardware.nvidia.enable = mkEnableOption {
+    mroz.hardware.nvidia.enable = mkEnableOption {
       default = true;
       description = "Enable Nvidia driver";
     };

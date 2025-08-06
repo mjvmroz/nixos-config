@@ -11,6 +11,9 @@ _:
   "texifier" # LaTeX Editor
   "texstudio" # LaTeX Editor
 
+  # Game dev
+  "blender" # 3D Modeling
+
   # Communication Tools
   # "discord"
   # "notion"

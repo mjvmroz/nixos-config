@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, pkgs, ... }:
 {
   nix.settings = {
     substituters = [
@@ -15,5 +15,9 @@
       "cache.mercury.com:yhfFlgvqtv0cAxzflJ0aZW3mbulx4+5EOZm6k3oML+I="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
+  };
+
+  security.pam.services.sudo_local = lib.mkIf pkgs.stdenv.isDarwin {
+    touchIdAuth = true;
   };
 }

@@ -15,6 +15,7 @@
     ../../modules/darwin/security.nix
     ../../modules/darwin/home-manager.nix
     ../../modules/darwin/postgres.nix
+    ../../modules/shared/cachix
     ../../modules/shared
     agenix.darwinModules.default
   ];
@@ -22,15 +23,11 @@
   # Setup user, packages, programs
   nix = {
     package = pkgs.nix;
-    settings = lib.mkMerge [
-      (import ../../modules/shared/cachix)
-      {
-        trusted-users = [
-          "@admin"
-          "${identity.user}"
-        ];
-      }
-    ];
+    settings = {
+      trusted-users = [
+        "@admin"
+      ];
+    };
 
     gc = {
       automatic = true;

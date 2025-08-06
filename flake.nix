@@ -99,7 +99,7 @@
           darwin.lib.darwinSystem {
             inherit system;
             specialArgs = inputs // {
-              inherit identity;
+              inherit identity inputs;
             };
             modules = [
               home-manager.darwinModules.home-manager
@@ -113,7 +113,7 @@
           sapporo = darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             specialArgs = inputs // {
-              inherit identity;
+              inherit identity inputs;
             };
             modules = [
               home-manager.darwinModules.home-manager
@@ -132,7 +132,7 @@
           chomusuke = darwin.lib.darwinSystem {
             system = "aarch64-darwin";
             specialArgs = inputs // {
-              inherit identity;
+              inherit identity inputs;
             };
             modules = [
               home-manager.darwinModules.home-manager
@@ -150,7 +150,7 @@
         tokyo1958 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = inputs // {
-            inherit identity;
+            inherit identity inputs;
           };
           modules = [
             hosts/nixos/tokyo1958

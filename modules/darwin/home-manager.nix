@@ -95,7 +95,10 @@ in
       enable = true;
       entries = [
         { path = "/Applications/Google Chrome.app/"; }
-        { path = "/System/Applications/Messages.app/"; }
+        # TODO: Maybe this is a good case for trying out modules + options?
+        #       I don't want messages to be in the dock on my work machine,
+        #       but I do want it on my personal ones.
+        # { path = "/System/Applications/Messages.app/"; }
         { path = "/Applications/iTerm.app/"; }
         { path = "/Applications/1Password.app/"; }
         { path = "/Applications/Visual Studio Code.app/"; }

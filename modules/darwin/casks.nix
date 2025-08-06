@@ -9,7 +9,7 @@ _:
   "cursor" # Code editor with advanced AI features
   "zed" # Code Editor
   # "neovide" # Modern GUI for neovim - i need to fix something... neovim version? Also it took over my default apps.
-  "texifier" # LaTeX Editor
+  # "texifier" # LaTeX Editor
   "texstudio" # LaTeX Editor
 
   # Game dev

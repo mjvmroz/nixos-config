@@ -84,7 +84,7 @@ in
           dock = {
             enable = true;
             entries = [
-              { path = "/Applications/Google Chrome.app/"; }
+              { path = "/Applications/Firefox Developer Edition.app/"; }
               # TODO: Maybe this is a good case for trying out modules + options?
               #       I don't want messages to be in the dock on my work machine,
               #       but I do want it on my personal ones.

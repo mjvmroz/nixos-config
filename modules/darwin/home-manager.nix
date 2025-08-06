@@ -61,6 +61,7 @@ in
       {
         imports = [
           ./home/dock
+          ../shared/home-manager.nix
         ];
 
         home = {
@@ -72,6 +73,15 @@ in
           ];
 
           stateVersion = "23.11";
+
+          mrozShell = {
+            enable = true;
+            identity = {
+              name = identity.name;
+              email = identity.email;
+              signingKey = identity.signingKey;
+            };
+          };
 
           # Fully declarative dock using the latest from Nix Store
           dock = {
@@ -100,17 +110,6 @@ in
             ];
           };
         };
-
-        programs =
-          { }
-          // import ../shared/home-manager.nix {
-            inherit
-              identity
-              config
-              pkgs
-              lib
-              ;
-          };
       };
   };
 }

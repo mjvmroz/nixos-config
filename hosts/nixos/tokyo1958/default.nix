@@ -13,14 +13,6 @@
 let
   pkgs-unstable = hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
   sharedFiles = import ../../../modules/shared/files.nix { inherit config pkgs; };
-  shared-programs = import ../../../modules/shared/home-manager.nix {
-    inherit
-      config
-      pkgs
-      lib
-      identity
-      ;
-  };
   # This one is 1Password-managed
   keys = [ identity.sshKey ];
 in
@@ -39,8 +31,21 @@ in
         ...
       }:
       {
+        imports = [
+          ../../../modules/shared/home-manager.nix
+        ];
+
         home = {
           stateVersion = "25.05";
+
+          mrozShell = {
+            enable = true;
+            identity = {
+              name = identity.name;
+              email = identity.email;
+              signingKey = identity.signingKey;
+            };
+          };
 
           sessionVariables = {
             STEAM_EXTRA_COMPAT_DATA_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
@@ -59,7 +64,7 @@ in
           ];
         };
 
-        programs = shared-programs // {
+        programs = {
           vscode = {
             enable = true;
           };

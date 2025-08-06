@@ -76,7 +76,7 @@ in
             enable = true;
             identity = {
               name = identity.name;
-              email = identity.email;
+              gitEmail = identity.gitEmail;
               signingKey = identity.signingKey;
             };
           };

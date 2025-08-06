@@ -38,7 +38,7 @@ in
       example = "Your Name";
     };
 
-    home.mroz.shell.identity.email = mkOption {
+    home.mroz.shell.identity.gitEmail = mkOption {
       type = types.str;
       description = "Git user email.";
       example = "your@email.com";
@@ -275,7 +275,7 @@ in
         };
         ignores = [ "*.swp" ];
         userName = cfg.identity.name;
-        userEmail = cfg.identity.email;
+        userEmail = cfg.identity.gitEmail;
         lfs = {
           enable = true;
         };

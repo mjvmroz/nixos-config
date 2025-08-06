@@ -54,7 +54,7 @@
     let
       identity = {
         name = "Michael Mroz";
-        email = "michael@mroz.io";
+        gitEmail = "4539332+mjvmroz@users.noreply.github.com";
         user = "mroz";
         sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJRQgKmvXGkbgTLFTCT0gtm6/fojgXcJhfcvNW2n6+WB";
         signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFXfLkgyrc4VC+xkXo5uCmQqx+nRxrdKwvyKOzEud6IF";

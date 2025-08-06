@@ -2,5 +2,5 @@ _:
 
 [
   # Global DBs
-  "postgis" # Spatial DB extension for (and including) PostgreSQL
+  # "postgis" # Spatial DB extension for (and including) PostgreSQL
 ]

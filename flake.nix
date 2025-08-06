@@ -151,41 +151,18 @@
           };
         };
 
-      nixosConfigurations =
-        nixpkgs.lib.genAttrs linuxSystems (
-          system:
-          nixpkgs.lib.nixosSystem {
-            inherit system;
-            specialArgs = inputs // {
-              inherit identity;
-            };
-            modules = [
-              disko.nixosModules.disko
-              home-manager.nixosModules.home-manager
-              opnix.nixosModules.default
-              {
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  users.${identity.user} = import ./modules/nixos/home-manager.nix { inherit identity; };
-                };
-              }
-              ./hosts/nixos
-            ];
-          }
-        )
-        // {
-          tokyo1958 = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-            specialArgs = inputs // {
-              inherit identity;
-            };
-            modules = [
-              home-manager.nixosModules.home-manager
-              opnix.nixosModules.default
-              hosts/nixos/tokyo1958
-            ];
+      nixosConfigurations = {
+        tokyo1958 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = inputs // {
+            inherit identity;
           };
+          modules = [
+            home-manager.nixosModules.home-manager
+            opnix.nixosModules.default
+            hosts/nixos/tokyo1958
+          ];
         };
+      };
     };
 }

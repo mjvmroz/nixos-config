@@ -47,10 +47,9 @@ in
     # you may receive an error message "Redownload Unavailable with This Apple ID".
     # This message is safe to ignore. (https://github.com/dustinlyons/nixos-config/issues/83)
 
-    masApps =
-      {
-        Tailscale = 1475387142;
-      };
+    masApps = {
+      Tailscale = 1475387142;
+    };
   };
 
   # Enable home-manager
@@ -74,7 +73,17 @@ in
 
           stateVersion = "23.11";
         };
-        programs = { } // import ../shared/home-manager.nix { inherit config pkgs lib onePassAgentPath gpgSshProgram; };
+        programs =
+          { }
+          // import ../shared/home-manager.nix {
+            inherit
+              config
+              pkgs
+              lib
+              onePassAgentPath
+              gpgSshProgram
+              ;
+          };
 
         # Marked broken Oct 20, 2022 check later to remove this
         # https://github.com/nix-community/home-manager/issues/3344

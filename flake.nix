@@ -142,6 +142,9 @@
               {
                 networking.hostName = "chomusuke";
                 ids.gids.nixbld = 350;
+                # Work makes me use Kandji, which wants to manage
+                # my tailscale installation itself 🤬
+                services.tailscale.enable = false;
               }
             ];
           };

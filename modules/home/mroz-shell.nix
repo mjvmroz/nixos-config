@@ -432,7 +432,7 @@ in
           "${config.home.homeDirectory}/.ssh/config_external"
         ];
         matchBlocks."*" = {
-          identityAgent = onePass.sshAgentSock;
+          identityAgent = "\"${onePass.sshAgentSock}\"";
           forwardAgent = false;
           addKeysToAgent = "no";
           compression = false;

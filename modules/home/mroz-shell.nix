@@ -56,7 +56,7 @@ in
       # Shared shell configuration
       zsh = {
         enable = true;
-        dotDir = "dotfiles";
+        dotDir = "${config.home.homeDirectory}/dotfiles";
         autocd = true;
         enableCompletion = true;
         syntaxHighlighting = {
@@ -427,12 +427,23 @@ in
 
       ssh = {
         enable = true;
+        enableDefaultConfig = false;
         includes = [
           "${config.home.homeDirectory}/.ssh/config_external"
         ];
-        extraConfig = ''
-          IdentityAgent "${onePass.sshAgentSock}"
-        '';
+        matchBlocks."*" = {
+          identityAgent = onePass.sshAgentSock;
+          forwardAgent = false;
+          addKeysToAgent = "no";
+          compression = false;
+          serverAliveInterval = 0;
+          serverAliveCountMax = 3;
+          hashKnownHosts = false;
+          userKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts";
+          controlMaster = "no";
+          controlPath = "${config.home.homeDirectory}/.ssh/master-%r@%n:%p";
+          controlPersist = "no";
+        };
       };
 
       tmux = {
@@ -524,18 +535,6 @@ in
       };
 
       ############################################################
-
-      newsboat = {
-        enable = true;
-        urls = [
-          # "https://news.ycombinator.com/rss"
-          # "https://lobste.rs/rss"
-          {
-            url = "https://www.heneli.dev/feed.xml";
-            tags = [ "haskell" ];
-          }
-        ];
-      };
 
       yt-dlp = {
         enable = true;

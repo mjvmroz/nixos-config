@@ -4,7 +4,7 @@ _:
   # Development Tools
   "iterm2" # Terminal emulator
   "ghostty" # Terminal emulator (I use this on linux, might as well try it on mac)
-  "homebrew/cask/docker" # Containerization
+  "homebrew/cask/docker-desktop" # Containerization
   "visual-studio-code" # Code Editor
   "cursor" # Code editor with advanced AI features
   "zed" # Code Editor
@@ -22,11 +22,11 @@ _:
   "zoom"
 
   # Utilities
-  "syncthing" # File Sync
+  "syncthing-app" # File Sync
   "1password" # Password Manager
   "1password-cli" # Terminal integration for 1Password
   "chatgpt" # Know things
-  "ollama" # Know things less good but less internetly
+  "ollama-app" # Know things less good but less internetly
   "linearmouse" # Mouse acceleration fix
 
   # Entertainment Tools

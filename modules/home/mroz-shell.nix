@@ -261,36 +261,41 @@ in
 
       git = {
         enable = true;
-        delta = {
-          enable = true;
-          options = {
-            features = "decorations line-numbers side-by-side";
-            whitespace-error-style = "22 reverse";
-            decorations = {
-              commit-decoration-style = "bold yellow box ul";
-              file-style = "bold yellow ul";
-              file-decoration-style = "none";
+        ignores = [ "*.swp" ];
+        settings = {
+          user = {
+            name = cfg.identity.name;
+            email = cfg.identity.gitEmail;
+          };
+          extraConfig = {
+            init.defaultBranch = "main";
+            core = {
+              editor = "vim";
+              autocrlf = "input";
             };
+            user.signingkey = cfg.identity.signingKey;
+            gpg.format = "ssh";
+            gpg.ssh = onePass.gpgProgram;
+            commit.gpgsign = true;
+            pull.rebase = true;
+            rebase.autoStash = true;
           };
         };
-        ignores = [ "*.swp" ];
-        userName = cfg.identity.name;
-        userEmail = cfg.identity.gitEmail;
         lfs = {
           enable = true;
         };
-        extraConfig = {
-          init.defaultBranch = "main";
-          core = {
-            editor = "vim";
-            autocrlf = "input";
+      };
+
+      delta = {
+        enable = true;
+        options = {
+          features = "decorations line-numbers side-by-side";
+          whitespace-error-style = "22 reverse";
+          decorations = {
+            commit-decoration-style = "bold yellow box ul";
+            file-style = "bold yellow ul";
+            file-decoration-style = "none";
           };
-          user.signingkey = cfg.identity.signingKey;
-          gpg.format = "ssh";
-          gpg.ssh.program = onePass.gpgProgram;
-          commit.gpgsign = true;
-          pull.rebase = true;
-          rebase.autoStash = true;
         };
       };
 

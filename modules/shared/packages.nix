@@ -58,7 +58,7 @@ with pkgs;
   font-awesome # Icon font
   hack-font
   noto-fonts
-  noto-fonts-emoji
+  noto-fonts-color-emoji
   meslo-lgs-nf
 
   # Node.js development tools

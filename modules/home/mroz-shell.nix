@@ -8,6 +8,11 @@
 with lib;
 let
   cfg = config.home.mroz.shell;
+  stateHome =
+    if config ? xdg && config.xdg ? stateHome then
+      config.xdg.stateHome
+    else
+      "${config.home.homeDirectory}/.local/state";
   onePass =
     if pkgs.stdenv.hostPlatform.isLinux then
       {
@@ -60,14 +65,6 @@ in
         autocd = true;
         enableCompletion = true;
         syntaxHighlighting = {
-          enable = true;
-        };
-        history = {
-          append = true;
-          ignoreDups = true;
-          ignoreSpace = true; # Leading spaces hide commands from history
-        };
-        historySubstringSearch = {
           enable = true;
         };
         autosuggestion = {
@@ -134,9 +131,6 @@ in
           export PATH=$HOME/.local/share/bin:$PATH
 
           export LESS="-R -M -i -J -z-4 --mouse"
-
-          # Remove history data we don't want to see
-          export HISTIGNORE="pwd:ls:cd"
 
           # nix-direnv makes this warning a virtual certainty, and I know about ctrl-c
           export DIRENV_WARN_TIMEOUT=100000h
@@ -259,13 +253,31 @@ in
         };
       };
 
+      atuin = {
+        enable = true;
+        enableZshIntegration = true;
+        settings = {
+          enter_accept = true;
+          inline_height = 20;
+        };
+      };
+
       git = {
         enable = true;
         ignores = [ "*.swp" ];
+        signing = {
+          signByDefault = true;
+          key = cfg.identity.signingKey;
+          format = "ssh";
+          signer = onePass.gpgProgram;
+        };
         settings = {
           user = {
             name = cfg.identity.name;
             email = cfg.identity.gitEmail;
+          };
+          push = {
+            autoSetupRemote = true;
           };
           extraConfig = {
             init.defaultBranch = "main";
@@ -273,10 +285,6 @@ in
               editor = "vim";
               autocrlf = "input";
             };
-            user.signingkey = cfg.identity.signingKey;
-            gpg.format = "ssh";
-            gpg.ssh = onePass.gpgProgram;
-            commit.gpgsign = true;
             pull.rebase = true;
             rebase.autoStash = true;
           };
@@ -545,5 +553,25 @@ in
         enable = true;
       };
     };
+
+    # One-time migration: import existing zsh history into atuin, preserving it.
+    # Guarded by a marker file to keep rebuilds idempotent.
+    home.activation.atuinImportZshHistory = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      atuin_bin="${lib.getExe pkgs.atuin}"
+      zsh_hist="${config.home.homeDirectory}/.zsh_history"
+      marker_dir="${stateHome}/atuin"
+      marker_file="$marker_dir/imported-zsh-history"
+
+      if [ -x "$atuin_bin" ] && [ -f "$zsh_hist" ] && [ ! -f "$marker_file" ]; then
+        echo >&2 "Importing zsh history into atuin (one-time)..."
+        mkdir -p "$marker_dir"
+        if HISTFILE="$zsh_hist" "$atuin_bin" import zsh; then
+          touch "$marker_file"
+          echo >&2 "Atuin history import complete."
+        else
+          echo >&2 "WARNING: atuin import failed; not writing marker file."
+        fi
+      fi
+    '';
   };
 }

@@ -76,7 +76,10 @@
       devShell =
         system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
         in
         {
           default =
@@ -94,9 +97,32 @@
               '';
             };
         };
+
+      homeConfig =
+        system: hostPath:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        in
+        home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          extraSpecialArgs = inputs // {
+            inherit identity inputs;
+          };
+          modules = [
+            hostPath
+          ];
+        };
     in
     {
       devShells = forAllSystems devShell;
+
+      homeConfigurations = {
+        # Standalone Home Manager config for Fedora workstation/server.
+        nagoya = homeConfig "x86_64-linux" ./hosts/home/nagoya;
+      };
 
       darwinConfigurations =
         nixpkgs.lib.genAttrs darwinSystems (

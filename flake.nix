@@ -33,6 +33,10 @@
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
     stylix.url = "github:nix-community/stylix";
+    unison-lang = {
+      url = "github:ceedubs/unison-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
     {
@@ -50,6 +54,7 @@
       treefmt-nix,
       hyprland,
       stylix,
+      unison-lang,
     }@inputs:
     let
       identity = {

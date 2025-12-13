@@ -12,6 +12,7 @@ with pkgs;
   # Languages
   rustup # Rust programming language
   haskellPackages.ghcitui # Haskell command line interface wrapper
+  unison-ucm # Unison code manager
 
   # Databases
   sqlite # Single-threaded file-based database

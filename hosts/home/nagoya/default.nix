@@ -8,7 +8,6 @@
 {
   imports = [
     ../../../modules/home/mroz-shell.nix
-    ../../../modules/home/linux
   ];
 
   home = {
@@ -21,9 +20,10 @@
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
-    # Install 1Password via Nix (no dnf/rpm needed).
-    _1password-gui
-    _1password-cli
+    ripgrep
+    jq
+    btop
+    bat
   ];
 
   home.mroz.shell = {
@@ -39,4 +39,12 @@
   home.sessionVariables = {
     HOSTNAME = "nagoya";
   };
+
+  programs.zsh.initContent = ''
+    # CUDA paths for development
+    export PATH="/usr/local/cuda/bin:$PATH"
+    export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
+  '';
+
+  nixpkgs.config.allowUnfree = true;
 }

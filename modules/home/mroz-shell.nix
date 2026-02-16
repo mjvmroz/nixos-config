@@ -315,7 +315,7 @@ in
 
       fzf = {
         enable = true;
-        enableZshIntegration = true;
+        enableZshIntegration = false;
         defaultCommand = "ag -g ''";
         fileWidgetCommand = "fd --type f";
       };

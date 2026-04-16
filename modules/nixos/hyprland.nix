@@ -7,9 +7,6 @@
 }:
 
 with lib;
-let
-  pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.system};
-in
 {
   options = {
     mroz.hyprland.enable = mkEnableOption {
@@ -22,9 +19,10 @@ in
     programs.hyprland = {
       enable = true;
       # set the flake package
-      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+      package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
       # make sure to also set the portal package, so that they are in sync
-      portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+      portalPackage =
+        inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
       xwayland.enable = true;
     };
 

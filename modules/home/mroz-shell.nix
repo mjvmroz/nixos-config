@@ -121,7 +121,7 @@ in
           ns = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history"; # Search Nix packages with nix-search-tv
         };
         cdpath = [ "~/.local/share/src" ];
-        initContent = lib.mkBefore ''
+        initContent = lib.mkBefore (''
           if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
             . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
             . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
@@ -129,6 +129,12 @@ in
 
           # Define variables for directories
           export PATH=$HOME/.local/share/bin:$PATH
+        ''
+        + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+          # Docker Desktop for Mac installs its CLI tools here
+          export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
+        ''
+        + ''
 
           export LESS="-R -M -i -J -z-4 --mouse"
 
@@ -221,7 +227,7 @@ in
           zstyle ':fzf-tab:*' use-fzf-default-opts yes
           # switch group using `<` and `>`
           zstyle ':fzf-tab:*' switch-group '<' '>'
-        '';
+        '');
       };
 
       starship = {

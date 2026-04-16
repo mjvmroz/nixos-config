@@ -12,7 +12,6 @@ with pkgs;
   # Languages
   rustup # Rust programming language
   haskellPackages.ghcitui # Haskell command line interface wrapper
-  unison-ucm # Unison code manager
 
   # Databases
   sqlite # Single-threaded file-based database
@@ -28,7 +27,7 @@ with pkgs;
   btop # Better top
   coreutils # GNU core utilities
   killall # Kill processes by name
-  neofetch # System info
+  fastfetch # System info
   openssh # Secure shell
   zip # Compress files
   graphite-cli # Graphite (friendly git stacking) command line interface
@@ -48,10 +47,6 @@ with pkgs;
   gnupg
   libfido2
 
-  # Cloud-related tools and SDKs
-  docker # Containerization
-  docker-compose # Docker orchestration
-
   # Media-related packages
   dejavu_fonts
   ffmpeg # Video and audio processing
@@ -65,7 +60,7 @@ with pkgs;
   # Node.js development tools
   # nodePackages.npm # globally install npm
   # nodePackages.prettier
-  # nodejs
+  nodejs
 
   # Text and terminal utilities
   xan # CSV viewing, querying, joining, etc

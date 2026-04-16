@@ -22,21 +22,10 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hyprland.url = "github:hyprwm/Hyprland";
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-    nixos-unified.url = "github:srid/nixos-unified";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
     stylix.url = "github:nix-community/stylix";
-    unison-lang = {
-      url = "github:ceedubs/unison-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
   outputs =
     {
@@ -47,14 +36,10 @@
       homebrew-cask,
       home-manager,
       nixpkgs,
-      disko,
       agenix,
       flake-parts,
-      nixos-unified,
-      treefmt-nix,
       hyprland,
       stylix,
-      unison-lang,
     }@inputs:
     let
       identity = {

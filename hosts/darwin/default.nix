@@ -55,16 +55,11 @@
   # Turn off NIX_PATH warnings now that we're using flakes
   system.checks.verifyNixPath = false;
 
-  # Add overlays
-  nixpkgs.overlays = [
-    inputs.unison-lang.overlay
-  ];
-
   # Load configuration that is shared across systems
   environment.systemPackages =
     with pkgs;
     [
-      inputs.agenix.packages."${pkgs.system}".default
+      inputs.agenix.packages."${pkgs.stdenv.hostPlatform.system}".default
     ]
     ++ (import ../../modules/shared/packages.nix { inherit pkgs; });
 

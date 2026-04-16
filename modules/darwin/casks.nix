@@ -4,7 +4,6 @@ _:
   # Development Tools
   "iterm2" # Terminal emulator
   "ghostty" # Terminal emulator (I use this on linux, might as well try it on mac)
-  "homebrew/cask/docker-desktop" # Containerization
   "visual-studio-code" # Code Editor
   "cursor" # Code editor with advanced AI features
   "zed" # Code Editor

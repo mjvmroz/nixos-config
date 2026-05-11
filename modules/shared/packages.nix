@@ -3,7 +3,7 @@
 with pkgs;
 [
   # Nix
-  nixfmt-rfc-style # Opinionated Nix style
+  nixfmt # Opinionated Nix style
   nil # Nix language server
   devenv # Toolchain for project-specific development environments
   nix-output-monitor # Prettify builds with pipes

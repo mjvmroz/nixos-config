@@ -2,6 +2,7 @@
   config,
   pkgs,
   nixpkgs,
+  devenv,
   system,
   ...
 }:
@@ -28,6 +29,11 @@
         filter (n: match ".*\\.nix" n != null || pathExists (path + ("/" + n + "/default.nix"))) (
           attrNames (readDir path)
         )
-      );
+      )
+      ++ [
+        (_final: prev: {
+          devenv = devenv.packages.${prev.stdenv.hostPlatform.system}.devenv;
+        })
+      ];
   };
 }

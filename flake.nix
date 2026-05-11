@@ -26,6 +26,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     stylix.url = "github:nix-community/stylix";
+    devenv.url = "github:cachix/devenv";
   };
   outputs =
     {
@@ -40,6 +41,7 @@
       flake-parts,
       hyprland,
       stylix,
+      devenv,
     }@inputs:
     let
       identity = {

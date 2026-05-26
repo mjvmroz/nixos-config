@@ -29,7 +29,9 @@ _:
   "linearmouse" # Mouse acceleration fix
 
   # Entertainment Tools
-  "iina" # Video Player
+
+  # Error: Cask 'iina' definition is invalid: Only a single 'depends_on macos' is allowed.
+  # "iina" # Video Player
   "spotify" # Music Player
 
   # Productivity Tools

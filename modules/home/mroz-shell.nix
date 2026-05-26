@@ -121,113 +121,115 @@ in
           ns = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history"; # Search Nix packages with nix-search-tv
         };
         cdpath = [ "~/.local/share/src" ];
-        initContent = lib.mkBefore (''
-          if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-            . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-            . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-          fi
-
-          # Define variables for directories
-          export PATH=$HOME/.local/share/bin:$PATH
-        ''
-        + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-          # Docker Desktop for Mac installs its CLI tools here
-          export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
-        ''
-        + ''
-
-          export LESS="-R -M -i -J -z-4 --mouse"
-
-          # nix-direnv makes this warning a virtual certainty, and I know about ctrl-c
-          export DIRENV_WARN_TIMEOUT=100000h
-
-          # nix shortcuts
-          shell() {
-            nix-shell '<nixpkgs>' -A "$1"
-          }
-
-          expand_tilde() {
-            tilde_less="''${1#\~/}"
-            [ "$1" != "$tilde_less" ] && tilde_less="$HOME/$tilde_less"
-            printf '%s' "$tilde_less"
-          }
-
-          port_info() {
-            setopt pipefail
-            lsof -i -P | grep LISTEN | grep :$1
-          }
-
-          port_pid() {
-            setopt pipefail
-            port_info $1 | awk '{print $2}'
-          }
-
-          port_kill() {
-            setopt pipefail
-            port_pid $1 | xargs kill
-          }
-
-          csvless () {
-            column -s, -t < $1 | less -#2 -N -S
-          }
-
-          tree () {
-            exa --tree --color=always $1 | less
-          }
-
-          ndr-universal() {
-            if command -v nix-direnv-reload >/dev/null 2>&1; then
-              nix-direnv-reload "$@"
-            else
-              direnv reload "$@"
+        initContent = lib.mkBefore (
+          ''
+            if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+              . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+              . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
             fi
-          }
 
-          # Hard-reset and rebuild the current project
-          cabal-reset() {
-            rm -rf dist-newstyle            # remove every cached artefact
-            cabal clean -v0                 # wipe local component dirs
-            cabal build  "$@"               # full recompilation
-          }
+            # Define variables for directories
+            export PATH=$HOME/.local/share/bin:$PATH
+          ''
+          + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+            # Docker Desktop for Mac installs its CLI tools here
+            export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
+          ''
+          + ''
 
-          # Remove cache for the package dependencies given as arguments.
-          # This is a targeted alternative to `cabal-reset`, and might be
-          # flaky but might also save time in some extreme cases.
-          # Usage: cabal-prune <package1> <package2> ...
-          cabal-prune() {
-            for pkg in "$@"; do
-              find dist-newstyle -type d -name "$${pkg}-*" -prune -exec rm -rf {} +
-            done
-          }
+            export LESS="-R -M -i -J -z-4 --mouse"
 
-          export SSH_AUTH_SOCK=$(expand_tilde "${onePass.sshAgentSock}")
+            # nix-direnv makes this warning a virtual certainty, and I know about ctrl-c
+            export DIRENV_WARN_TIMEOUT=100000h
 
-          bindkey '^[[1;9D' beginning-of-line
-          bindkey '^[[1;9C' end-of-line
+            # nix shortcuts
+            shell() {
+              nix-shell '<nixpkgs>' -A "$1"
+            }
 
-          #####
-          # fzf-tab settings
-          #####
-          # disable sort when completing `git checkout`
-          zstyle ':completion:*:git-checkout:*' sort false
-          # set descriptions format to enable group support
-          # NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
-          zstyle ':completion:*:descriptions' format '[%d]'
-          # set list-colors to enable filename colorizing
-          zstyle ':completion:*' list-colors "$${(s.:.)LS_COLORS}"
-          # force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
-          zstyle ':completion:*' menu no
-          # preview directory's content with eza when completing cd
-          zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-          # custom fzf flags
-          # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
-          zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
-          # To make fzf-tab follow FZF_DEFAULT_OPTS.
-          # NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
-          zstyle ':fzf-tab:*' use-fzf-default-opts yes
-          # switch group using `<` and `>`
-          zstyle ':fzf-tab:*' switch-group '<' '>'
-        '');
+            expand_tilde() {
+              tilde_less="''${1#\~/}"
+              [ "$1" != "$tilde_less" ] && tilde_less="$HOME/$tilde_less"
+              printf '%s' "$tilde_less"
+            }
+
+            port_info() {
+              setopt pipefail
+              lsof -i -P | grep LISTEN | grep :$1
+            }
+
+            port_pid() {
+              setopt pipefail
+              port_info $1 | awk '{print $2}'
+            }
+
+            port_kill() {
+              setopt pipefail
+              port_pid $1 | xargs kill
+            }
+
+            csvless () {
+              column -s, -t < $1 | less -#2 -N -S
+            }
+
+            tree () {
+              exa --tree --color=always $1 | less
+            }
+
+            ndr-universal() {
+              if command -v nix-direnv-reload >/dev/null 2>&1; then
+                nix-direnv-reload "$@"
+              else
+                direnv reload "$@"
+              fi
+            }
+
+            # Hard-reset and rebuild the current project
+            cabal-reset() {
+              rm -rf dist-newstyle            # remove every cached artefact
+              cabal clean -v0                 # wipe local component dirs
+              cabal build  "$@"               # full recompilation
+            }
+
+            # Remove cache for the package dependencies given as arguments.
+            # This is a targeted alternative to `cabal-reset`, and might be
+            # flaky but might also save time in some extreme cases.
+            # Usage: cabal-prune <package1> <package2> ...
+            cabal-prune() {
+              for pkg in "$@"; do
+                find dist-newstyle -type d -name "$${pkg}-*" -prune -exec rm -rf {} +
+              done
+            }
+
+            export SSH_AUTH_SOCK=$(expand_tilde "${onePass.sshAgentSock}")
+
+            bindkey '^[[1;9D' beginning-of-line
+            bindkey '^[[1;9C' end-of-line
+
+            #####
+            # fzf-tab settings
+            #####
+            # disable sort when completing `git checkout`
+            zstyle ':completion:*:git-checkout:*' sort false
+            # set descriptions format to enable group support
+            # NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
+            zstyle ':completion:*:descriptions' format '[%d]'
+            # set list-colors to enable filename colorizing
+            zstyle ':completion:*' list-colors "$${(s.:.)LS_COLORS}"
+            # force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+            zstyle ':completion:*' menu no
+            # preview directory's content with eza when completing cd
+            zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+            # custom fzf flags
+            # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
+            zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
+            # To make fzf-tab follow FZF_DEFAULT_OPTS.
+            # NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
+            zstyle ':fzf-tab:*' use-fzf-default-opts yes
+            # switch group using `<` and `>`
+            zstyle ':fzf-tab:*' switch-group '<' '>'
+          ''
+        );
       };
 
       starship = {
@@ -550,6 +552,14 @@ in
       };
 
       bun = {
+        enable = true;
+      };
+
+      ripgrep = {
+        enable = true;
+      };
+
+      ripgrep-all = {
         enable = true;
       };
 

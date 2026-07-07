@@ -129,7 +129,7 @@ in
             fi
 
             # Define variables for directories
-            export PATH=$HOME/.local/share/bin:$PATH
+            export PATH=$HOME/.local/bin:$HOME/.local/share/bin:$PATH
           ''
           + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
             # Docker Desktop for Mac installs its CLI tools here

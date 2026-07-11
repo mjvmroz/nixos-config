@@ -72,6 +72,9 @@ with pkgs;
   # unrar
   # unzip
 
+  # Coding tools
+  gh
+
   # AI tools
   claude-code
 ]

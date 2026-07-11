@@ -21,11 +21,9 @@ _:
   "zoom"
 
   # Utilities
-  "syncthing-app" # File Sync
   "1password" # Password Manager
   "1password-cli" # Terminal integration for 1Password
   "chatgpt" # Know things
-  "ollama-app" # Know things less good but less internetly
   "linearmouse" # Mouse acceleration fix
 
   # Entertainment Tools

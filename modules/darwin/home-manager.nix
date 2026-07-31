@@ -25,6 +25,7 @@ in
     brews = [
       "k3d"
       "kubectl"
+      "gh"
     ];
     taps = builtins.attrNames config.nix-homebrew.taps; # This defaults empty which causes problems with the aggressive nix-based management below
     onActivation = {

@@ -184,7 +184,12 @@ in
         initContent =
           let
             earlyInit = ''
-              if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+              # Recovery path for when a macOS update clobbers the system shell
+              # files and nix-darwin's PATH goes with them. Guarded on nix being
+              # absent: sourcing this unconditionally puts the installer's
+              # bootstrap profile on PATH next to nix-darwin's own nix, and
+              # `nix doctor` fails on the two of them.
+              if ! command -v nix > /dev/null && [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
                 . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
                 . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
               fi

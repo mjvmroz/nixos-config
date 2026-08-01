@@ -27,10 +27,6 @@
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     stylix.url = "github:nix-community/stylix";
     devenv.url = "github:cachix/devenv";
-    lix-module = {
-      url = "git+https://git.lix.systems/lix-project/nixos-module";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
   outputs =
     {
@@ -46,7 +42,6 @@
       hyprland,
       stylix,
       devenv,
-      lix-module,
     }@inputs:
     let
       identity = {
@@ -132,7 +127,7 @@
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
               stylix.darwinModules.stylix
-              lix-module.darwinModules.lixFromNixpkgs
+              modules/darwin/lix.nix
               hosts/darwin
             ];
           }
@@ -147,7 +142,9 @@
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
               stylix.darwinModules.stylix
-              lix-module.darwinModules.lixFromNixpkgs
+              # Determinate ships CppNix, so modules/darwin/lix.nix is left out
+              # here rather than pointing nix-direnv and friends at an interpreter
+              # this host doesn't actually run.
               hosts/darwin
               {
                 networking.hostName = "sapporo";
@@ -155,10 +152,6 @@
                 #       doesn't permit nix-darwin to manage the installation itself.
                 nix.enable = false;
                 nix.gc.automatic = nixpkgs.lib.mkForce false;
-                # Determinate ships CppNix, so keep the Lix overlay off here rather
-                # than pointing nix-direnv and friends at an interpreter this host
-                # doesn't actually run.
-                lix.enable = false;
               }
             ];
           };
@@ -171,11 +164,21 @@
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
               stylix.darwinModules.stylix
-              lix-module.darwinModules.lixFromNixpkgs
+              modules/darwin/lix.nix
               hosts/darwin
               {
                 networking.hostName = "chomusuke";
                 ids.gids.nixbld = 350;
+
+                # bootstrap-mercury insists on a literal `extra-trusted-users`
+                # entry naming the current user, and adds it by replacing
+                # nix-darwin's /etc/nix/nix.conf symlink with a regular file.
+                # The next darwin-rebuild then aborts on "unrecognized content"
+                # in /etc. `trusted-users = @admin` already covers this user, so
+                # this is redundant, but emitting it is what stops the two tools
+                # fighting over the file.
+                nix.settings.extra-trusted-users = [ identity.user ];
+
                 # Work makes me use Kandji, which wants to manage
                 # my tailscale installation itself 🤬
                 services.tailscale.enable = nixpkgs.lib.mkForce false;

@@ -16,8 +16,8 @@
   ];
 
   # Setup user, packages, programs
+  # nix.package is set by modules/darwin/lix.nix, which not every host imports.
   nix = {
-    package = pkgs.lix;
     settings = {
       trusted-users = [
         "@admin"
@@ -67,6 +67,19 @@
       "/run/current-system/sw"
     ]
   );
+
+  # Keeping the installer's profile off PATH isn't enough on its own, because
+  # anything that sources its profile.d snippets before shelling out puts it
+  # back, and `nix doctor` then fails on the two nix binaries. Since nix-darwin
+  # owns nix here, the copy in that profile is dead weight: the daemon plist
+  # execs an absolute store path and NIX_SSL_CERT_FILE comes from /etc/static,
+  # so nothing depends on it. Drop it and leave the rest of the profile alone.
+  system.activationScripts.postActivation.text = lib.mkIf config.nix.enable ''
+    if [[ -e /nix/var/nix/profiles/default/bin/nix ]]; then
+      echo "removing the redundant nix from the installer's bootstrap profile" >&2
+      nix-env --profile /nix/var/nix/profiles/default --uninstall lix nix || true
+    fi
+  '';
 
   # Load configuration that is shared across systems
   environment.systemPackages =

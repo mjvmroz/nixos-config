@@ -31,10 +31,13 @@ Let Apple know that we'd like to use the computer:
 xcode-select --install
 ```
 
-And then install Lix, which nix-darwin also uses as the interpreter (`nix.package = pkgs.lix`).
-The installer is only a bootstrap; nix-darwin takes ownership of `/etc/nix/nix.conf` and the
-daemon on the first switch. It is also the only Nix installer with a working uninstaller, which
-matters on macOS.
+And then install Lix. nix-darwin runs Lix as the interpreter too, taken from nixpkgs' released
+package set — see `modules/darwin/lix.nix`, which hosts import individually so that a machine
+running someone else's Nix keeps its own. The installer is only a bootstrap: nix-darwin takes
+ownership of `/etc/nix/nix.conf` and the daemon on the first switch, and activation then drops
+the installer's copy of Nix from `/nix/var/nix/profiles/default`, so that tools which source
+that profile still see a single interpreter. Lix is also the only Nix installer with a working
+uninstaller, which matters on macOS.
 
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.lix.systems/lix | sh -s -- install
@@ -43,11 +46,11 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.lix.systems/lix | sh -s 
 Finally, cut over to the new Nix:
 
 ```sh
-# First time:
+# First time, naming the host explicitly since nix-darwin doesn't own the hostname yet:
 sudo nix run github:nix-darwin/nix-darwin#darwin-rebuild -- switch --flake .#chomusuke
 
-# Subsequent times:
-sudo nix-darwin switch --flake .
+# Subsequent times, resolved from the hostname:
+sudo darwin-rebuild switch --flake .
 ```
 
 The installer creates the `nixbld` group at GID 350, which is why `ids.gids.nixbld` is pinned to

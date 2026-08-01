@@ -11,6 +11,7 @@
   imports = [
     ./fonts.nix
     ./security
+    ./theme.nix
   ];
 
   nixpkgs = {

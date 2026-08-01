@@ -26,6 +26,7 @@ in
       "k3d"
       "kubectl"
       "gh"
+      "mas" # brew bundle installs this implicitly for masApps; listing it stops cleanup uninstalling it each activation
     ];
     taps = builtins.attrNames config.nix-homebrew.taps; # This defaults empty which causes problems with the aggressive nix-based management below
     onActivation = {

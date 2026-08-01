@@ -99,6 +99,10 @@
             inherit identity inputs;
           };
           modules = [
+            # NixOS and nix-darwin hosts get these through their system module
+            # tree; a standalone home-manager config has to import them itself.
+            stylix.homeModules.stylix
+            ./modules/shared/theme.nix
             hostPath
           ];
         };
@@ -163,6 +167,9 @@
                 # Work makes me use Kandji, which wants to manage
                 # my tailscale installation itself 🤬
                 services.tailscale.enable = nixpkgs.lib.mkForce false;
+
+                # Work wants to randomly push changes to ~/.ssh/config 🫠
+                home-manager.backupFileExtension = "backup";
               }
             ];
           };

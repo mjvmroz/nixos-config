@@ -13,6 +13,12 @@ let
       config.xdg.stateHome
     else
       "${config.home.homeDirectory}/.local/state";
+  # Stylix owns the vivid theme; bake the result at build time so interactive
+  # shells read a file instead of forking vivid.
+  vividTheme = config.xdg.configFile."vivid/themes/${config.programs.vivid.activeTheme}.yml".source;
+  lsColors = pkgs.runCommand "ls-colors" { } ''
+    ${lib.getExe pkgs.vivid} generate ${vividTheme} | tr -d '\n' > $out
+  '';
   onePass =
     if pkgs.stdenv.hostPlatform.isLinux then
       {
@@ -73,15 +79,6 @@ in
         };
         plugins = [
           {
-            name = "zsh-ls-colors";
-            src = pkgs.fetchFromGitHub {
-              owner = "xPMo";
-              repo = "zsh-ls-colors";
-              rev = "6a5e0c4d201467cd469b300108939543a59ffed7";
-              sha256 = "sha256-YtzyXVGG5ZfvqIkGSinRx6MxZPaz2NKVkNq7+cvFp7Y=";
-            };
-          }
-          {
             name = "fzf-tab";
             src = pkgs.fetchFromGitHub {
               owner = "Aloxaf";
@@ -93,24 +90,23 @@ in
         ];
 
         shellAliases = {
-          ll = "exa -l";
-          la = "exa -la";
+          ll = "eza -l --git --icons --group-directories-first";
+          la = "eza -la --git --icons --group-directories-first";
           gl = "git pull";
           gp = "git push";
           gco = "git checkout";
-          cat = "bat";
           top = "btop";
-          # At some point I should update these. I've been carrying them around since bailing on OMZ an eon ago.
-          glg = "git log --stat";
-          glgp = "git log --stat -p";
-          glgg = "git log --graph";
-          glgga = "git log --graph --decorate --all";
-          glgm = "git log --graph --max-count 10";
-          glo = "git log --oneline --decorate";
-          glol = "git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-          glola = "git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all";
-          glog = "git log --oneline --decorate --graph";
-          gloga = "git log --oneline --decorate --graph --all";
+          # Thin wrappers over the git aliases defined in programs.git.settings.alias below.
+          glg = "git lg";
+          glgp = "git lgp";
+          glgg = "git lgg";
+          glgga = "git lgga";
+          glgm = "git lgm";
+          glo = "git lo";
+          glol = "git lol";
+          glola = "git lola";
+          glog = "git lgo";
+          gloga = "git lgoa";
           cf = "code $(fzf)";
           "c." = "cursor .";
           "co." = "code .";
@@ -121,115 +117,175 @@ in
           ns = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history"; # Search Nix packages with nix-search-tv
         };
         cdpath = [ "~/.local/share/src" ];
-        initContent = lib.mkBefore (
-          ''
-            if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-              . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-              . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+        # Cache the completion dump under XDG and skip the fpath security scan when
+        # it is less than a day old; the scan is the bulk of zsh startup cost.
+        completionInit = ''
+          autoload -Uz compinit
+          () {
+            emulate -L zsh -o extended_glob
+            local dump="''${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-''${ZSH_VERSION}"
+            mkdir -p "''${dump:h}"
+            if [[ -f $dump && -n $dump(#qN.md-1) ]]; then
+              compinit -C -d $dump
+            else
+              compinit -d $dump
             fi
+          }
+        '';
 
-            # Define variables for directories
-            export PATH=$HOME/.local/bin:$HOME/.local/share/bin:$PATH
-          ''
-          + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
-            # Docker Desktop for Mac installs its CLI tools here
-            export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
-          ''
-          + ''
+        history = {
+          size = 100000;
+          save = 100000;
+          expireDuplicatesFirst = true;
+          ignoreSpace = true;
+        };
 
-            export LESS="-R -M -i -J -z-4 --mouse"
-
-            # nix-direnv makes this warning a virtual certainty, and I know about ctrl-c
-            export DIRENV_WARN_TIMEOUT=100000h
-
-            # nix shortcuts
-            shell() {
-              nix-shell '<nixpkgs>' -A "$1"
-            }
-
-            expand_tilde() {
-              tilde_less="''${1#\~/}"
-              [ "$1" != "$tilde_less" ] && tilde_less="$HOME/$tilde_less"
-              printf '%s' "$tilde_less"
-            }
-
-            port_info() {
-              setopt pipefail
-              lsof -i -P | grep LISTEN | grep :$1
-            }
-
-            port_pid() {
-              setopt pipefail
-              port_info $1 | awk '{print $2}'
-            }
-
-            port_kill() {
-              setopt pipefail
-              port_pid $1 | xargs kill
-            }
-
-            csvless () {
-              column -s, -t < $1 | less -#2 -N -S
-            }
-
-            tree () {
-              exa --tree --color=always $1 | less
-            }
-
-            ndr-universal() {
-              if command -v nix-direnv-reload >/dev/null 2>&1; then
-                nix-direnv-reload "$@"
-              else
-                direnv reload "$@"
+        initContent =
+          let
+            earlyInit = ''
+              if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+                . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+                . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
               fi
-            }
 
-            # Hard-reset and rebuild the current project
-            cabal-reset() {
-              rm -rf dist-newstyle            # remove every cached artefact
-              cabal clean -v0                 # wipe local component dirs
-              cabal build  "$@"               # full recompilation
-            }
+              # Define variables for directories
+              export PATH=$HOME/.local/bin:$HOME/.local/share/bin:$PATH
+            ''
+            + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+              # Docker Desktop for Mac installs its CLI tools here
+              export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
+            ''
+            + ''
 
-            # Remove cache for the package dependencies given as arguments.
-            # This is a targeted alternative to `cabal-reset`, and might be
-            # flaky but might also save time in some extreme cases.
-            # Usage: cabal-prune <package1> <package2> ...
-            cabal-prune() {
-              for pkg in "$@"; do
-                find dist-newstyle -type d -name "$${pkg}-*" -prune -exec rm -rf {} +
-              done
-            }
+              export LESS="-R -M -i -J -z-4 --mouse"
 
-            export SSH_AUTH_SOCK=$(expand_tilde "${onePass.sshAgentSock}")
+              # Generated by vivid at build time. Drives eza/ls output and, through
+              # the list-colors zstyle below, the completion menu.
+              export LS_COLORS="$(< ${lsColors})"
 
-            bindkey '^[[1;9D' beginning-of-line
-            bindkey '^[[1;9C' end-of-line
+              # nix-direnv makes this warning a virtual certainty, and I know about ctrl-c
+              export DIRENV_WARN_TIMEOUT=100000h
 
-            #####
-            # fzf-tab settings
-            #####
-            # disable sort when completing `git checkout`
-            zstyle ':completion:*:git-checkout:*' sort false
-            # set descriptions format to enable group support
-            # NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
-            zstyle ':completion:*:descriptions' format '[%d]'
-            # set list-colors to enable filename colorizing
-            zstyle ':completion:*' list-colors "$${(s.:.)LS_COLORS}"
-            # force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
-            zstyle ':completion:*' menu no
-            # preview directory's content with eza when completing cd
-            zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-            # custom fzf flags
-            # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
-            zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
-            # To make fzf-tab follow FZF_DEFAULT_OPTS.
-            # NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
-            zstyle ':fzf-tab:*' use-fzf-default-opts yes
-            # switch group using `<` and `>`
-            zstyle ':fzf-tab:*' switch-group '<' '>'
-          ''
-        );
+              # nix shortcuts
+              shell() {
+                nix-shell '<nixpkgs>' -A "$1"
+              }
+
+              expand_tilde() {
+                tilde_less="''${1#\~/}"
+                [ "$1" != "$tilde_less" ] && tilde_less="$HOME/$tilde_less"
+                printf '%s' "$tilde_less"
+              }
+
+              port_info() {
+                setopt pipefail
+                lsof -i -P | grep LISTEN | grep :$1
+              }
+
+              port_pid() {
+                setopt pipefail
+                port_info $1 | awk '{print $2}'
+              }
+
+              port_kill() {
+                setopt pipefail
+                port_pid $1 | xargs kill
+              }
+
+              csvless () {
+                column -s, -t < $1 | less -#2 -N -S
+              }
+
+              tree () {
+                eza --tree --color=always $1 | less
+              }
+
+              ndr-universal() {
+                if command -v nix-direnv-reload >/dev/null 2>&1; then
+                  nix-direnv-reload "$@"
+                else
+                  direnv reload "$@"
+                fi
+              }
+
+              # Hard-reset and rebuild the current project
+              cabal-reset() {
+                rm -rf dist-newstyle            # remove every cached artefact
+                cabal clean -v0                 # wipe local component dirs
+                cabal build  "$@"               # full recompilation
+              }
+
+              # Remove cache for the package dependencies given as arguments.
+              # This is a targeted alternative to `cabal-reset`, and might be
+              # flaky but might also save time in some extreme cases.
+              # Usage: cabal-prune <package1> <package2> ...
+              cabal-prune() {
+                for pkg in "$@"; do
+                  find dist-newstyle -type d -name "''${pkg}-*" -prune -exec rm -rf {} +
+                done
+              }
+
+              export SSH_AUTH_SOCK=$(expand_tilde "${onePass.sshAgentSock}")
+            '';
+
+            # Ordered after atuin (1000) so these bindings win, but before
+            # zsh-syntax-highlighting (1200), which has to see every custom widget.
+            completionAndKeys = ''
+              bindkey '^[[1;9D' beginning-of-line
+              bindkey '^[[1;9C' end-of-line
+
+              # Prefix-aware history on the arrows. Atuin runs with --disable-up-arrow
+              # so it only owns ^R and leaves these to us.
+              autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+              zle -N up-line-or-beginning-search
+              zle -N down-line-or-beginning-search
+              bindkey '^[[A' up-line-or-beginning-search
+              bindkey '^[[B' down-line-or-beginning-search
+              bindkey '^P' up-line-or-beginning-search
+              bindkey '^N' down-line-or-beginning-search
+
+              #####
+              # Completion behaviour
+              #####
+              # Exact, then case-insensitive, then partial-word (f.b -> foo.bar), then substring.
+              zstyle ':completion:*' matcher-list "" \
+                'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' \
+                'r:|[._-]=* r:|=*' \
+                'l:|=* r:|=*'
+              # Suppress zsh's own menu so fzf-tab can capture the unambiguous prefix.
+              zstyle ':completion:*' menu no
+              zstyle ':completion:*' list-colors ''${(s.:.)LS_COLORS}
+              # NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
+              zstyle ':completion:*:descriptions' format '[%d]'
+              zstyle ':completion:*' group-name ""
+              zstyle ':completion:*' squeeze-slashes true
+              zstyle ':completion:*' special-dirs true
+              zstyle ':completion:*' use-cache yes
+              zstyle ':completion:*' cache-path "''${XDG_CACHE_HOME:-$HOME/.cache}/zsh/compcache"
+              zstyle ':completion:*:git-checkout:*' sort false
+              zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
+
+              #####
+              # fzf-tab
+              #####
+              zstyle ':fzf-tab:*' use-fzf-default-opts yes
+              zstyle ':fzf-tab:*' fzf-bindings 'tab:down' 'btab:up' 'ctrl-space:toggle'
+              zstyle ':fzf-tab:*' switch-group '<' '>'
+              zstyle ':fzf-tab:*' fzf-min-height 15
+              zstyle ':fzf-tab:complete:*:*' fzf-preview '
+                if [[ -d $realpath ]]; then
+                  eza -1 --color=always --icons --group-directories-first -- $realpath
+                elif [[ -f $realpath ]]; then
+                  bat --color=always --style=numbers --line-range=:200 -- $realpath
+                fi'
+              zstyle ':fzf-tab:complete:git-(add|diff|restore|checkout|show):*' fzf-preview \
+                'git diff --color=always $word'
+            '';
+          in
+          lib.mkMerge [
+            (lib.mkOrder 500 earlyInit)
+            (lib.mkOrder 1180 completionAndKeys)
+          ];
       };
 
       starship = {
@@ -248,11 +304,6 @@ in
         };
       };
 
-      carapace = {
-        enable = true;
-        enableZshIntegration = true;
-      };
-
       direnv = {
         enable = true;
         enableZshIntegration = true;
@@ -264,9 +315,19 @@ in
       atuin = {
         enable = true;
         enableZshIntegration = true;
+        # Leave the arrow keys to zsh's own prefix search; atuin only owns ^R.
+        flags = [ "--disable-up-arrow" ];
+        daemon.enable = true;
         settings = {
-          enter_accept = true;
+          # Enter puts the command on the line to edit rather than running it outright.
+          enter_accept = false;
           inline_height = 20;
+          style = "compact";
+          show_preview = true;
+          filter_mode_shell_up_key_binding = "session";
+          workspaces = true;
+          secrets_filter = true;
+          update_check = false;
         };
       };
 
@@ -280,6 +341,18 @@ in
           signer = onePass.gpgProgram;
         };
         settings = {
+          alias = {
+            lg = "log --stat";
+            lgp = "log --stat -p";
+            lgg = "log --graph";
+            lgga = "log --graph --decorate --all";
+            lgm = "log --graph --max-count 10";
+            lo = "log --oneline --decorate";
+            lgo = "log --oneline --decorate --graph";
+            lgoa = "log --oneline --decorate --graph --all";
+            lol = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+            lola = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all";
+          };
           user = {
             name = cfg.identity.name;
             email = cfg.identity.gitEmail;
@@ -287,15 +360,13 @@ in
           push = {
             autoSetupRemote = true;
           };
-          extraConfig = {
-            init.defaultBranch = "main";
-            core = {
-              editor = "vim";
-              autocrlf = "input";
-            };
-            pull.rebase = true;
-            rebase.autoStash = true;
+          init.defaultBranch = "main";
+          core = {
+            editor = "vim";
+            autocrlf = "input";
           };
+          pull.rebase = true;
+          rebase.autoStash = true;
         };
         lfs = {
           enable = true;
@@ -304,8 +375,12 @@ in
 
       delta = {
         enable = true;
+        enableGitIntegration = true;
         options = {
           features = "decorations line-numbers side-by-side";
+          # tmTheme generated by Stylix's bat target, which delta reads from
+          # bat's theme cache.
+          syntax-theme = "base16-stylix";
           whitespace-error-style = "22 reverse";
           decorations = {
             commit-decoration-style = "bold yellow box ul";
@@ -317,12 +392,38 @@ in
 
       fzf = {
         enable = true;
-        enableZshIntegration = false;
-        defaultCommand = "ag -g ''";
-        fileWidgetCommand = "fd --type f";
+        # Home-manager emits this at order 910 and atuin at 1000, so atuin keeps ^R
+        # while we get back ^T and M-c.
+        enableZshIntegration = true;
+        defaultCommand = "fd --type f --hidden --follow --exclude .git";
+        defaultOptions = [
+          "--height=60%"
+          "--layout=reverse"
+          "--border"
+          "--info=inline"
+        ];
+        fileWidgetCommand = "fd --type f --hidden --follow --exclude .git";
+        fileWidgetOptions = [
+          "--preview 'bat --color=always --style=numbers --line-range=:200 {}'"
+        ];
+        changeDirWidgetCommand = "fd --type d --hidden --follow --exclude .git";
+        changeDirWidgetOptions = [
+          "--preview 'eza -1 --color=always --icons {}'"
+        ];
       };
 
       eza.enable = true;
+
+      # Enabled so Stylix has somewhere to write its theme. The LS_COLORS export
+      # is baked into the store above, so the per-shell integration stays off.
+      vivid = {
+        enable = true;
+        enableZshIntegration = false;
+      };
+
+      bat.enable = true;
+
+      btop.enable = true;
 
       zoxide = {
         enable = true;
@@ -452,18 +553,18 @@ in
         includes = [
           "${config.home.homeDirectory}/.ssh/config_external"
         ];
-        matchBlocks."*" = {
-          identityAgent = "\"${onePass.sshAgentSock}\"";
-          forwardAgent = false;
-          addKeysToAgent = "no";
-          compression = false;
-          serverAliveInterval = 0;
-          serverAliveCountMax = 3;
-          hashKnownHosts = false;
-          userKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts";
-          controlMaster = "no";
-          controlPath = "${config.home.homeDirectory}/.ssh/master-%r@%n:%p";
-          controlPersist = "no";
+        settings."*" = {
+          IdentityAgent = "\"${onePass.sshAgentSock}\"";
+          ForwardAgent = false;
+          AddKeysToAgent = "no";
+          Compression = false;
+          ServerAliveInterval = 0;
+          ServerAliveCountMax = 3;
+          HashKnownHosts = false;
+          UserKnownHostsFile = "${config.home.homeDirectory}/.ssh/known_hosts";
+          ControlMaster = "no";
+          ControlPath = "${config.home.homeDirectory}/.ssh/master-%r@%n:%p";
+          ControlPersist = "no";
         };
       };
 
@@ -474,12 +575,6 @@ in
           sensible
           yank
           prefix-highlight
-          {
-            plugin = power-theme;
-            extraConfig = ''
-              set -g @tmux_power_theme 'gold'
-            '';
-          }
           {
             plugin = resurrect; # Used by tmux-continuum
 
@@ -504,6 +599,10 @@ in
         escapeTime = 10;
         historyLimit = 50000;
         extraConfig = ''
+          # Stylix emits 24-bit hex colours; without this tmux quantises them
+          # down to the 256-colour cube and the pastels go muddy.
+          set -ga terminal-features ",*:RGB"
+
           # Remove Vim mode delays
           set -g focus-events on
 
@@ -569,6 +668,10 @@ in
         enable = true;
       };
     };
+
+    # Extra completion functions for tools nixpkgs doesn't ship completions for.
+    # Picked up via the $fpath entry for the home-manager profile.
+    home.packages = [ pkgs.zsh-completions ];
 
     # One-time migration: import existing zsh history into atuin, preserving it.
     # Guarded by a marker file to keep rebuilds idempotent.

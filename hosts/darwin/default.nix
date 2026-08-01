@@ -55,6 +55,19 @@
   # Turn off NIX_PATH warnings now that we're using flakes
   system.checks.verifyNixPath = false;
 
+  # nix-darwin puts the installer's bootstrap profile on PATH alongside its own
+  # Nix, so `nix doctor` sees two nix binaries and fails. Where nix-darwin owns
+  # the installation its copy is authoritative, so drop the bootstrap one; the
+  # binary stays on disk as a recovery fallback, just not on PATH. Hosts with
+  # nix.enable = false must keep it, since there it is the only Nix they have.
+  environment.profiles = lib.mkIf config.nix.enable (
+    lib.mkForce [
+      "$HOME/.nix-profile"
+      "/etc/profiles/per-user/$USER"
+      "/run/current-system/sw"
+    ]
+  );
+
   # Load configuration that is shared across systems
   environment.systemPackages =
     with pkgs;

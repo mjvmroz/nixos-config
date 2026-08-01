@@ -155,6 +155,10 @@
                 #       doesn't permit nix-darwin to manage the installation itself.
                 nix.enable = false;
                 nix.gc.automatic = nixpkgs.lib.mkForce false;
+                # Determinate ships CppNix, so keep the Lix overlay off here rather
+                # than pointing nix-direnv and friends at an interpreter this host
+                # doesn't actually run.
+                lix.enable = false;
               }
             ];
           };

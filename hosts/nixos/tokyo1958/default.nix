@@ -89,10 +89,7 @@ in
           vscode = {
             enable = true;
           };
-          ghostty = {
-            enable = true;
-            package = pkgs.ghostty;
-          };
+          # Ghostty is configured in modules/home/shell/ghostty.nix.
           kitty = {
             enable = true;
           };

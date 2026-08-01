@@ -94,7 +94,7 @@ in
               #       I don't want messages to be in the dock on my work machine,
               #       but I do want it on my personal ones.
               # { path = "/System/Applications/Messages.app/"; }
-              { path = "/Applications/iTerm.app/"; }
+              { path = "/Applications/Ghostty.app/"; }
               { path = "/Applications/1Password.app/"; }
               { path = "/Applications/Visual Studio Code.app/"; }
               { path = "/Applications/Spotify.app/"; }

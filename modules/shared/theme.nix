@@ -98,5 +98,10 @@ in
       package = pkgs.nerd-fonts.hasklug;
       name = "Hasklug Nerd Font";
     };
+
+    # Just enough to let the desktop show through behind the terminal. Anything
+    # lower starts costing contrast against a background this dark. Set to 1.0
+    # for a fully opaque terminal.
+    opacity.terminal = 0.95;
   };
 }

@@ -55,12 +55,21 @@ sudo nix-darwin switch --flake .
 
 **macOS only:**
 
-- **iTerm2**: Preferences > General > Preferences > Load preferences from a custom folder or URL:
+- **Ghostty** is the primary terminal and is fully declarative: the app comes from the
+  Homebrew cask and its config from `modules/home/shell/ghostty.nix`, so there is nothing
+  to do by hand. The quick terminal (cmd-`) needs Accessibility permission the first time
+  it is triggered.
+- **iTerm2** is kept only as a fallback and is no longer themed. If you want to use it,
+  Preferences > General > Preferences > Load preferences from a custom folder or URL:
   - `~/.config/nix-iterm2` (read-only via nix), or
   - `${thisProject}/modules/darwin/config/nix-iterm` (read-write via git, not controlled by nix)
 
 ## Updating
 
 Update Nix flakes with `nix flake update`, then install to apply changes.
+
+Rebuilds can go through `nh`, which wraps `darwin-rebuild` with nix-output-monitor and
+prints a diff of what changed between generations. `NH_FLAKE` is already set, so
+`nh darwin switch` works from any directory.
 
 On macOS, software managed through brew (mostly casks for graphical apps) should get the latest version on install. I have mutable brew management disabled.

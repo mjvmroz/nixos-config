@@ -23,17 +23,63 @@ let
     if pkgs.stdenv.hostPlatform.isLinux then
       {
         sshAgentSock = "~/.1password/agent.sock";
-        gpgProgram = lib.getExe' pkgs._1password-gui "op-ssh-sign";
       }
     else if pkgs.stdenv.hostPlatform.isDarwin then
       {
         sshAgentSock = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
-        gpgProgram = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
       }
     else
       throw "Unsupported platform for 1Password agent socket";
+
+  # Expanded in place on space and enter, so what lands in history (and in
+  # atuin) is the command that actually ran. Anything here is deliberately not
+  # also a shell alias: an alias would shadow the expansion and make
+  # zsh-you-should-use nag about the command it just produced.
+  abbreviations = {
+    # git
+    gs = "git status";
+    ga = "git add";
+    gd = "git diff";
+    gds = "git diff --staged";
+    gc = "git commit";
+    gca = "git commit --amend";
+    gl = "git pull";
+    gp = "git push";
+    gpf = "git push --force-with-lease";
+    gco = "git checkout";
+    gsw = "git switch";
+    gst = "git stash";
+    grb = "git rebase";
+    gab = "git ab";
+    gdf = "git dft";
+    glg = "git lg";
+    glgp = "git lgp";
+    glgg = "git lgg";
+    glgga = "git lgga";
+    glgm = "git lgm";
+    glo = "git lo";
+    glol = "git lol";
+    glola = "git lola";
+    glog = "git lgo";
+    gloga = "git lgoa";
+
+    # build and environment
+    cb = "cabal build";
+    cr = "cabal-reset";
+    ct = "cabal test";
+    dr = "ndr-universal";
+    da = "direnv allow";
+    nd = "nix develop";
+  };
+
+  abbreviationTable = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (
+      key: expansion: "  ${lib.escapeShellArg key} ${lib.escapeShellArg expansion}"
+    ) abbreviations
+  );
 in
 {
+  imports = [ ./shell ];
 
   options = {
     home.mroz.shell.enable = mkOption {
@@ -41,6 +87,15 @@ in
       default = false;
       description = "Enable Michael Mroz's shell configuration.";
       example = true;
+    };
+
+    home.mroz.shell.flakePath = mkOption {
+      type = types.str;
+      default = "${config.home.homeDirectory}/workspace/mjvmroz/nixos-config";
+      description = ''
+        Where this flake lives on the host. Used as nh's default flake, so
+        `nh darwin switch` and friends work from any directory.
+      '';
     };
 
     home.mroz.shell.identity.name = mkOption {
@@ -87,33 +142,19 @@ in
               sha256 = "zc9Sc1WQIbJ132hw73oiS1ExvxCRHagi6vMkCLd4ZhI=";
             };
           }
+          # you-should-use and zsh-autopair are deliberately not listed here;
+          # they are loaded lazily further down, since between them they cost
+          # about 60ms of startup and neither is needed to draw a prompt.
         ];
 
         shellAliases = {
           ll = "eza -l --git --icons --group-directories-first";
           la = "eza -la --git --icons --group-directories-first";
-          gl = "git pull";
-          gp = "git push";
-          gco = "git checkout";
+          lt = "eza --tree --level=2 --git --icons --group-directories-first";
           top = "btop";
-          # Thin wrappers over the git aliases defined in programs.git.settings.alias below.
-          glg = "git lg";
-          glgp = "git lgp";
-          glgg = "git lgg";
-          glgga = "git lgga";
-          glgm = "git lgm";
-          glo = "git lo";
-          glol = "git lol";
-          glola = "git lola";
-          glog = "git lgo";
-          gloga = "git lgoa";
-          cf = "code $(fzf)";
           "c." = "cursor .";
           "co." = "code .";
-          dr = "ndr-universal";
-          da = "direnv allow";
-          cb = "cabal build";
-          cr = "cabal-reset";
+          ghd = "gh-dash";
           ns = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history"; # Search Nix packages with nix-search-tv
         };
         cdpath = [ "~/.local/share/src" ];
@@ -166,6 +207,10 @@ in
               # nix-direnv makes this warning a virtual certainty, and I know about ctrl-c
               export DIRENV_WARN_TIMEOUT=100000h
 
+              # Read by zsh-you-should-use, which is sourced at order 900.
+              export YSU_MESSAGE_POSITION="after"
+              export YSU_MODE=BESTMATCH
+
               # nix shortcuts
               shell() {
                 nix-shell '<nixpkgs>' -A "$1"
@@ -198,6 +243,16 @@ in
 
               tree () {
                 eza --tree --color=always $1 | less
+              }
+
+              # Pick a file with a preview and open it in Cursor. A function
+              # rather than an alias so cancelling the picker does nothing
+              # instead of opening the working directory.
+              cf() {
+                local file
+                file=$(fd --type f --hidden --follow --exclude .git \
+                  | fzf --preview 'bat --color=always --style=numbers --line-range=:200 {}') || return
+                [[ -n $file ]] && cursor "$file"
               }
 
               ndr-universal() {
@@ -280,28 +335,92 @@ in
                 fi'
               zstyle ':fzf-tab:complete:git-(add|diff|restore|checkout|show):*' fzf-preview \
                 'git diff --color=always $word'
+
+              #####
+              # Abbreviations
+              #####
+              typeset -gA ZSH_ABBREVIATIONS
+              ZSH_ABBREVIATIONS=(
+              ${abbreviationTable}
+              )
+
+              # Rewrites the word under the cursor if it is an abbreviation and
+              # sits in command position, so `ga` becomes `git add` but the `gd`
+              # in `git add gd` is left alone.
+              _abbr_expand() {
+                emulate -L zsh
+                local -a tokens
+                tokens=(''${(z)LBUFFER})
+                (( $#tokens )) || return 1
+                # A trailing space means the word is already finished.
+                [[ $LBUFFER = *[[:space:]] ]] && return 1
+                local word=$tokens[-1]
+                local expansion=''${ZSH_ABBREVIATIONS[$word]}
+                [[ -n $expansion ]] || return 1
+                if (( $#tokens > 1 )); then
+                  case $tokens[-2] in
+                    ('|'|'||'|'&&'|';'|'&'|'sudo'|'command'|'time'|'xargs'|'nohup') ;;
+                    # A leading VAR=value assignment still leaves the next word
+                    # in command position.
+                    ([A-Za-z_]*=*) ;;
+                    (*) return 1 ;;
+                  esac
+                fi
+                LBUFFER="''${LBUFFER[1,-$(($#word + 1))]}$expansion"
+              }
+
+              _abbr_expand_and_insert() { _abbr_expand; zle self-insert }
+              _abbr_expand_and_accept() { _abbr_expand; zle accept-line }
+              zle -N _abbr_expand_and_insert
+              zle -N _abbr_expand_and_accept
+              bindkey ' ' _abbr_expand_and_insert
+              bindkey '^M' _abbr_expand_and_accept
+              # Alt-space when you want the abbreviation left alone.
+              bindkey '^[ ' self-insert
+              # Searching should never rewrite what you are searching for.
+              bindkey -M isearch ' ' self-insert
+
+              # What did I call that again?
+              abbrs() {
+                local key
+                for key in ''${(ko)ZSH_ABBREVIATIONS}; do
+                  printf '%-8s %s\n' "$key" "$ZSH_ABBREVIATIONS[$key]"
+                done
+              }
+
+              #####
+              # Deferred loading
+              #####
+              # None of these are needed to draw the first prompt, and together
+              # they cost around 60ms. zsh-defer runs them once the shell goes
+              # idle, which takes that off the critical path. Loading after
+              # zsh-syntax-highlighting is fine: it hooks zle-line-pre-redraw
+              # rather than wrapping widgets at load time.
+              # Despite the name, television's completion.zsh is not a
+              # completion: it defines two widgets and binds them over ^R and
+              # ^T, which belong to atuin and fzf. Put the bindings back and
+              # park the one genuinely new widget on M-t.
+              _load_television() {
+                source ${pkgs.television}/share/television/completion.zsh
+                (( ''${+widgets[atuin-search]} )) && bindkey '^R' atuin-search
+                (( ''${+widgets[fzf-file-widget]} )) && bindkey '^T' fzf-file-widget
+                bindkey '^[t' tv-smart-autocomplete
+              }
+
+              if [[ -o interactive ]]; then
+                source ${pkgs.zsh-defer}/share/zsh-defer/zsh-defer.plugin.zsh
+                zsh-defer source ${pkgs.zsh-you-should-use}/share/zsh/plugins/you-should-use/you-should-use.plugin.zsh
+                # autopair captures whatever is bound to space when it loads and
+                # delegates to it, so loading it last keeps abbreviations working.
+                zsh-defer source ${pkgs.zsh-autopair}/share/zsh/zsh-autopair/autopair.zsh
+                zsh-defer _load_television
+              fi
             '';
           in
           lib.mkMerge [
             (lib.mkOrder 500 earlyInit)
             (lib.mkOrder 1180 completionAndKeys)
           ];
-      };
-
-      starship = {
-        enable = true;
-        enableZshIntegration = true;
-        # Configuration written to ~/.config/starship.toml
-        settings = {
-          add_newline = true;
-
-          character = {
-            success_symbol = "[λ](bold green)"; # The 'success_symbol' segment is being set to '➜' with the color 'bold green'
-            error_symbol = "[λ](bold red)";
-          };
-
-          command_timeout = 600000; # milliseconds (10 minutes)
-        };
       };
 
       direnv = {
@@ -331,65 +450,6 @@ in
         };
       };
 
-      git = {
-        enable = true;
-        ignores = [ "*.swp" ];
-        signing = {
-          signByDefault = true;
-          key = cfg.identity.signingKey;
-          format = "ssh";
-          signer = onePass.gpgProgram;
-        };
-        settings = {
-          alias = {
-            lg = "log --stat";
-            lgp = "log --stat -p";
-            lgg = "log --graph";
-            lgga = "log --graph --decorate --all";
-            lgm = "log --graph --max-count 10";
-            lo = "log --oneline --decorate";
-            lgo = "log --oneline --decorate --graph";
-            lgoa = "log --oneline --decorate --graph --all";
-            lol = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-            lola = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all";
-          };
-          user = {
-            name = cfg.identity.name;
-            email = cfg.identity.gitEmail;
-          };
-          push = {
-            autoSetupRemote = true;
-          };
-          init.defaultBranch = "main";
-          core = {
-            editor = "vim";
-            autocrlf = "input";
-          };
-          pull.rebase = true;
-          rebase.autoStash = true;
-        };
-        lfs = {
-          enable = true;
-        };
-      };
-
-      delta = {
-        enable = true;
-        enableGitIntegration = true;
-        options = {
-          features = "decorations line-numbers side-by-side";
-          # tmTheme generated by Stylix's bat target, which delta reads from
-          # bat's theme cache.
-          syntax-theme = "base16-stylix";
-          whitespace-error-style = "22 reverse";
-          decorations = {
-            commit-decoration-style = "bold yellow box ul";
-            file-style = "bold yellow ul";
-            file-decoration-style = "none";
-          };
-        };
-      };
-
       fzf = {
         enable = true;
         # Home-manager emits this at order 910 and atuin at 1000, so atuin keeps ^R
@@ -410,6 +470,61 @@ in
         changeDirWidgetOptions = [
           "--preview 'eza -1 --color=always --icons {}'"
         ];
+      };
+
+      # `y` opens the browser and leaves the shell in whatever directory you
+      # quit from. Themed by Stylix's yazi target.
+      yazi = {
+        enable = true;
+        enableZshIntegration = true;
+        shellWrapperName = "y";
+        settings.mgr = {
+          show_hidden = false;
+          sort_dir_first = true;
+        };
+      };
+
+      # Channel-based fuzzy finder. It never binds keys, so atuin keeps ^R and
+      # fzf keeps ^T. Its completions are sourced lazily alongside the other
+      # deferred plugins rather than through enableZshIntegration.
+      television = {
+        enable = true;
+        enableZshIntegration = false;
+        settings.ui = {
+          use_nerd_font_icons = true;
+          ui_scale = 100;
+        };
+        channels = {
+          git-log = {
+            metadata = {
+              name = "git-log";
+              description = "Commits in the current repository";
+              requirements = [ "git" ];
+            };
+            source = {
+              command = "git log --oneline --date=short --pretty='format:%h %s %an %cd'";
+              output = "{split: :0}";
+            };
+            preview.command = "git show -p --stat --pretty=fuller --color=always '{0}'";
+          };
+          git-diff = {
+            metadata = {
+              name = "git-diff";
+              description = "Files changed against HEAD";
+              requirements = [ "git" ];
+            };
+            source.command = "git diff --name-only HEAD";
+            preview.command = "git diff HEAD --color=always -- '{}'";
+          };
+        };
+      };
+
+      # Wraps darwin-rebuild/nixos-rebuild with nix-output-monitor and prints a
+      # generation diff afterwards. Cleanup stays off; GC is handled at the
+      # system level.
+      nh = {
+        enable = true;
+        flake = cfg.flakePath;
       };
 
       eza.enable = true;
@@ -568,88 +683,6 @@ in
         };
       };
 
-      tmux = {
-        enable = true;
-        plugins = with pkgs.tmuxPlugins; [
-          vim-tmux-navigator
-          sensible
-          yank
-          prefix-highlight
-          {
-            plugin = resurrect; # Used by tmux-continuum
-
-            # Use XDG data directory
-            # https://github.com/tmux-plugins/tmux-resurrect/issues/348
-            extraConfig = ''
-              set -g @resurrect-dir '$HOME/.cache/tmux/resurrect'
-              set -g @resurrect-capture-pane-contents 'on'
-              set -g @resurrect-pane-contents-area 'visible'
-            '';
-          }
-          {
-            plugin = continuum;
-            extraConfig = ''
-              set -g @continuum-restore 'on'
-              set -g @continuum-save-interval '5' # minutes
-            '';
-          }
-        ];
-        terminal = "screen-256color";
-        prefix = "C-x";
-        escapeTime = 10;
-        historyLimit = 50000;
-        extraConfig = ''
-          # Stylix emits 24-bit hex colours; without this tmux quantises them
-          # down to the 256-colour cube and the pastels go muddy.
-          set -ga terminal-features ",*:RGB"
-
-          # Remove Vim mode delays
-          set -g focus-events on
-
-          # Enable full mouse support
-          set -g mouse on
-
-          # -----------------------------------------------------------------------------
-          # Key bindings
-          # -----------------------------------------------------------------------------
-
-          # Unbind default keys
-          unbind C-b
-          unbind '"'
-          unbind %
-
-          # Split panes, vertical or horizontal
-          bind-key x split-window -v
-          bind-key v split-window -h
-
-          # Move around panes with vim-like bindings (h,j,k,l)
-          bind-key -n M-k select-pane -U
-          bind-key -n M-h select-pane -L
-          bind-key -n M-j select-pane -D
-          bind-key -n M-l select-pane -R
-
-          # Smart pane switching with awareness of Vim splits.
-          # This is copy paste from https://github.com/christoomey/vim-tmux-navigator
-          is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
-            | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
-          bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h'  'select-pane -L'
-          bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j'  'select-pane -D'
-          bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k'  'select-pane -U'
-          bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l'  'select-pane -R'
-          tmux_version='$(tmux -V | sed -En "s/^tmux ([0-9]+(.[0-9]+)?).*/\1/p")'
-          if-shell -b '[ "$(echo "$tmux_version < 3.0" | bc)" = 1 ]' \
-            "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\'  'select-pane -l'"
-          if-shell -b '[ "$(echo "$tmux_version >= 3.0" | bc)" = 1 ]' \
-            "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\\\'  'select-pane -l'"
-
-          bind-key -T copy-mode-vi 'C-h' select-pane -L
-          bind-key -T copy-mode-vi 'C-j' select-pane -D
-          bind-key -T copy-mode-vi 'C-k' select-pane -U
-          bind-key -T copy-mode-vi 'C-l' select-pane -R
-          bind-key -T copy-mode-vi 'C-\' select-pane -l
-        '';
-      };
-
       bun = {
         enable = true;
       };
@@ -669,9 +702,26 @@ in
       };
     };
 
-    # Extra completion functions for tools nixpkgs doesn't ship completions for.
-    # Picked up via the $fpath entry for the home-manager profile.
-    home.packages = [ pkgs.zsh-completions ];
+    home.sessionVariables = {
+      EDITOR = "vim";
+      VISUAL = "vim";
+      # Syntax-highlighted man pages. col strips the overstrike backspaces
+      # groff emits, which bat would otherwise render literally.
+      MANPAGER = "sh -c 'col -bx | bat --language man --style plain'";
+      MANROFFOPT = "-c";
+    };
+
+    home.packages = [
+      # Extra completion functions for tools nixpkgs doesn't ship completions
+      # for. Picked up via the $fpath entry for the home-manager profile.
+      pkgs.zsh-completions
+
+      # bat's pager applied to man, grep, diff and friends.
+      pkgs.bat-extras.batman
+      pkgs.bat-extras.batgrep
+      pkgs.bat-extras.batdiff
+      pkgs.bat-extras.prettybat
+    ];
 
     # One-time migration: import existing zsh history into atuin, preserving it.
     # Guarded by a marker file to keep rebuilds idempotent.

@@ -2,8 +2,8 @@ _:
 
 [
   # Development Tools
-  "iterm2" # Terminal emulator
-  "ghostty" # Terminal emulator (I use this on linux, might as well try it on mac)
+  "ghostty" # Terminal emulator. Configured by modules/home/shell/ghostty.nix
+  "iterm2" # Fallback terminal emulator
   "visual-studio-code" # Code Editor
   "cursor" # Code editor with advanced AI features
   "zed" # Code Editor

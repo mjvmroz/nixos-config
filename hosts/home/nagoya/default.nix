@@ -7,6 +7,7 @@
 
 {
   imports = [
+    ../../../modules/home/gtk.nix
     ../../../modules/home/mroz-shell.nix
   ];
 

@@ -31,21 +31,28 @@ Let Apple know that we'd like to use the computer:
 xcode-select --install
 ```
 
-And then install Nix. I mostly use the Determinate Systems distribution:
+And then install Lix, which nix-darwin also uses as the interpreter (`nix.package = pkgs.lix`).
+The installer is only a bootstrap; nix-darwin takes ownership of `/etc/nix/nix.conf` and the
+daemon on the first switch. It is also the only Nix installer with a working uninstaller, which
+matters on macOS.
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.lix.systems/lix | sh -s -- install
 ```
 
 Finally, cut over to the new Nix:
 
 ```sh
 # First time:
-sudo nix run nix-darwin -- switch --flake .
+sudo nix run github:nix-darwin/nix-darwin#darwin-rebuild -- switch --flake .#chomusuke
 
 # Subsequent times:
 sudo nix-darwin switch --flake .
 ```
+
+The installer creates the `nixbld` group at GID 350, which is why `ids.gids.nixbld` is pinned to
+350 for `chomusuke` in `flake.nix`. If a future installer changes that, activation will fail until
+the two agree.
 
 #### Manual steps:
 

@@ -27,6 +27,10 @@
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     stylix.url = "github:nix-community/stylix";
     devenv.url = "github:cachix/devenv";
+    lix-module = {
+      url = "git+https://git.lix.systems/lix-project/nixos-module";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
     {
@@ -42,6 +46,7 @@
       hyprland,
       stylix,
       devenv,
+      lix-module,
     }@inputs:
     let
       identity = {
@@ -127,6 +132,7 @@
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
               stylix.darwinModules.stylix
+              lix-module.darwinModules.lixFromNixpkgs
               hosts/darwin
             ];
           }
@@ -141,6 +147,7 @@
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
               stylix.darwinModules.stylix
+              lix-module.darwinModules.lixFromNixpkgs
               hosts/darwin
               {
                 networking.hostName = "sapporo";
@@ -160,6 +167,7 @@
               home-manager.darwinModules.home-manager
               nix-homebrew.darwinModules.nix-homebrew
               stylix.darwinModules.stylix
+              lix-module.darwinModules.lixFromNixpkgs
               hosts/darwin
               {
                 networking.hostName = "chomusuke";

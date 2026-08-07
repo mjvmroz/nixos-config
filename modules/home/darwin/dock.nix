@@ -22,12 +22,28 @@ in
     };
 
     home.dock.entries = mkOption {
-      description = "Entries on the Dock";
+      description = ''
+        Entries on the Dock. Contributed from several places (the app registry,
+        the host config), so position comes from `order` rather than from the
+        order definitions happen to be merged in.
+      '';
+      default = [ ];
       type =
         with types;
         listOf (submodule {
           options = {
-            path = mkOption { type = str; };
+            path = mkOption {
+              type = str;
+              # dockutil compares against the URIs already in the Dock, which
+              # always carry a trailing slash for bundles. Normalising here means
+              # callers don't have to remember.
+              apply = path: if hasSuffix ".app" path then path + "/" else path;
+            };
+            order = mkOption {
+              type = int;
+              default = 100;
+              description = "Position within the Dock, sorted low to high.";
+            };
             section = mkOption {
               type = str;
               default = "apps";
@@ -38,13 +54,16 @@ in
             };
           };
         });
-      readOnly = true;
     };
   };
 
   config = mkIf cfg.enable (
     let
-      normalize = path: if hasSuffix ".app" path then path + "/" else path;
+      # Path breaks ties so the result doesn't depend on merge order.
+      entries = sort (
+        a: b: if a.order != b.order then a.order < b.order else a.path < b.path
+      ) cfg.entries;
+
       entryURI =
         path:
         "file://"
@@ -73,13 +92,13 @@ in
             "%28"
             "%29"
           ]
-          (normalize path)
+          path
         );
-      wantURIs = concatMapStrings (entry: "${entryURI entry.path}\n") cfg.entries;
+      wantURIs = concatMapStrings (entry: "${entryURI entry.path}\n") entries;
       createEntries = concatMapStrings (
         entry:
         "${dockutil}/bin/dockutil --no-restart --add '${entry.path}' --section ${entry.section} ${entry.options}\n"
-      ) cfg.entries;
+      ) entries;
     in
     {
       home.packages = with pkgs; [

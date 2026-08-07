@@ -12,7 +12,22 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew = {
-      url = "github:zhaofengli-wip/nix-homebrew";
+      # zhaofengli-wip is a redirect to this; needs to be recent enough to
+      # materialise declarative taps into the Taps tree rather than symlinking
+      # them at the store, which brew >= 6 rejects because the realpath of a
+      # formula escapes its tap root.
+      # https://github.com/zhaofengli/nix-homebrew/pull/150
+      url = "github:zhaofengli/nix-homebrew";
+      # nix-homebrew pins brew to a tag of its own choosing, which drifts behind
+      # the tap contents. The cask DSL is versioned with brew, so a tap newer
+      # than the interpreter fails to parse: an August 2026 cask using
+      # `postflight_steps` is "invalid" to brew 5.1.11. Point it at ours instead,
+      # so all three move together.
+      inputs.brew-src.follows = "brew-src";
+    };
+    brew-src = {
+      url = "github:homebrew/brew/6.0.15";
+      flake = false;
     };
     homebrew-core = {
       url = "github:homebrew/homebrew-core";
@@ -33,6 +48,7 @@
       self,
       darwin,
       nix-homebrew,
+      brew-src,
       homebrew-core,
       homebrew-cask,
       home-manager,
@@ -85,6 +101,25 @@
             };
         };
 
+      darwinConfig =
+        {
+          system ? "aarch64-darwin",
+          modules ? [ ],
+        }:
+        darwin.lib.darwinSystem {
+          inherit system;
+          specialArgs = inputs // {
+            inherit identity inputs;
+          };
+          modules = [
+            home-manager.darwinModules.home-manager
+            nix-homebrew.darwinModules.nix-homebrew
+            stylix.darwinModules.stylix
+            hosts/darwin
+          ]
+          ++ modules;
+        };
+
       homeConfig =
         system: hostPath:
         let
@@ -116,111 +151,22 @@
       };
 
       darwinConfigurations =
+        # Unnamed entries for bootstrapping a machine that doesn't have a host
+        # file yet: `darwin-rebuild switch --flake .#aarch64-darwin`.
         nixpkgs.lib.genAttrs darwinSystems (
           system:
-          darwin.lib.darwinSystem {
+          darwinConfig {
             inherit system;
-            specialArgs = inputs // {
-              inherit identity inputs;
-            };
             modules = [
-              home-manager.darwinModules.home-manager
-              nix-homebrew.darwinModules.nix-homebrew
-              stylix.darwinModules.stylix
               modules/darwin/lix.nix
-              hosts/darwin
+              { mroz.machine.profile = "personal"; }
             ];
           }
         )
         // {
-          sapporo = darwin.lib.darwinSystem {
-            system = "aarch64-darwin";
-            specialArgs = inputs // {
-              inherit identity inputs;
-            };
-            modules = [
-              home-manager.darwinModules.home-manager
-              nix-homebrew.darwinModules.nix-homebrew
-              stylix.darwinModules.stylix
-              # Determinate ships CppNix, so modules/darwin/lix.nix is left out
-              # here rather than pointing nix-direnv and friends at an interpreter
-              # this host doesn't actually run.
-              hosts/darwin
-              {
-                networking.hostName = "sapporo";
-                # TODO: clean this up. This machine now uses Determinate Nix, which
-                #       doesn't permit nix-darwin to manage the installation itself.
-                nix.enable = false;
-                nix.gc.automatic = nixpkgs.lib.mkForce false;
-              }
-            ];
-          };
-          chomusuke = darwin.lib.darwinSystem {
-            system = "aarch64-darwin";
-            specialArgs = inputs // {
-              inherit identity inputs;
-            };
-            modules = [
-              home-manager.darwinModules.home-manager
-              nix-homebrew.darwinModules.nix-homebrew
-              stylix.darwinModules.stylix
-              modules/darwin/lix.nix
-              hosts/darwin
-              {
-                networking.hostName = "chomusuke";
-                ids.gids.nixbld = 350;
-
-                # bootstrap-mercury insists on a literal `extra-trusted-users`
-                # entry naming the current user, and adds it by replacing
-                # nix-darwin's /etc/nix/nix.conf symlink with a regular file.
-                # The next darwin-rebuild then aborts on "unrecognized content"
-                # in /etc. `trusted-users = @admin` already covers this user, so
-                # this is redundant, but emitting it is what stops the two tools
-                # fighting over the file.
-                nix.settings.extra-trusted-users = [ identity.user ];
-
-                # Work makes me use Kandji, which wants to manage
-                # my tailscale installation itself 🤬
-                services.tailscale.enable = nixpkgs.lib.mkForce false;
-
-                # Work wants to randomly push changes to ~/.ssh/config 🫠
-                home-manager.backupFileExtension = "backup";
-              }
-            ];
-          };
-          megumin = darwin.lib.darwinSystem {
-            system = "aarch64-darwin";
-            specialArgs = inputs // {
-              inherit identity inputs;
-            };
-            modules = [
-              home-manager.darwinModules.home-manager
-              nix-homebrew.darwinModules.nix-homebrew
-              stylix.darwinModules.stylix
-              modules/darwin/lix.nix
-              hosts/darwin
-              {
-                networking.hostName = "megumin";
-                ids.gids.nixbld = 350;
-
-                # bootstrap-mercury insists on a literal `extra-trusted-users`
-                # entry naming the current user, and adds it by replacing
-                # nix-darwin's /etc/nix/nix.conf symlink with a regular file.
-                # The next darwin-rebuild then aborts on "unrecognized content"
-                # in /etc. `trusted-users = @admin` already covers this user, so
-                # this is redundant, but emitting it is what stops the two tools
-                # fighting over the file.
-                nix.settings.extra-trusted-users = [ identity.user ];
-
-                # Work makes me use Kandji, which wants to manage
-                # my tailscale installation itself 🤬
-                services.tailscale.enable = nixpkgs.lib.mkForce false;
-
-                # Work wants to randomly push changes to ~/.ssh/config 🫠
-                home-manager.backupFileExtension = "backup";
-              }
-            ];
-          };
+          sapporo = darwinConfig { modules = [ hosts/darwin/sapporo.nix ]; };
+          chomusuke = darwinConfig { modules = [ hosts/darwin/chomusuke.nix ]; };
+          megumin = darwinConfig { modules = [ hosts/darwin/megumin.nix ]; };
         };
 
       nixosConfigurations = {

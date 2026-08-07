@@ -91,7 +91,7 @@ in
 
     home.mroz.shell.flakePath = mkOption {
       type = types.str;
-      default = "${config.home.homeDirectory}/workspace/mjvmroz/nixos-config";
+      default = "${config.home.homeDirectory}/workspace/mroz/nixos-config";
       description = ''
         Where this flake lives on the host. Used as nh's default flake, so
         `nh darwin switch` and friends work from any directory.

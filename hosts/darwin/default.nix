@@ -9,6 +9,8 @@
 
 {
   imports = [
+    ../../modules/darwin/apps
+    ../../modules/darwin/profiles
     ../../modules/darwin/home-manager.nix
     ../../modules/darwin/postgres.nix
     ../../modules/shared

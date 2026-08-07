@@ -19,36 +19,28 @@ in
     shell = pkgs.zsh;
   };
 
+  # What gets installed comes from modules/darwin/apps; this is just how.
+  #
+  # If you have previously added a Mac App Store app to your profile (but not
+  # installed it on this system), you may see "Redownload Unavailable with This
+  # Apple ID". That message is safe to ignore.
+  # (https://github.com/dustinlyons/nixos-config/issues/83)
   homebrew = {
     enable = true;
-    casks = pkgs.callPackage ./casks.nix { };
-    brews = [
-      "k3d"
-      "kubectl"
-      "gh"
-      "mas" # brew bundle installs this implicitly for masApps; listing it stops cleanup uninstalling it each activation
-    ];
     taps = builtins.attrNames config.nix-homebrew.taps; # This defaults empty which causes problems with the aggressive nix-based management below
     onActivation = {
-      autoUpdate = true;
+      # Must stay off. nix-darwin only passes HOMEBREW_NO_AUTO_UPDATE=1 when
+      # this is false, and without it brew.sh re-execs itself to pick up new
+      # environment variables, losing the PATH entry nix-darwin injected for
+      # mas. Every masApps entry then fails with "mas installation failed",
+      # including ones already installed.
+      # https://github.com/zhaofengli/nix-homebrew/issues/131
+      #
+      # Taps are pinned as flake inputs anyway, so there is nothing for an
+      # auto-update to fetch; casks move when those inputs are updated.
+      autoUpdate = false;
       cleanup = "uninstall";
       upgrade = true;
-    };
-
-    # These app IDs are from using the mas CLI app
-    # mas = mac app store
-    # https://github.com/mas-cli/mas
-    #
-    # $ nix shell nixpkgs#mas
-    # $ mas search <app name>
-    #
-    # If you have previously added these apps to your Mac App Store profile (but not installed them on this system),
-    # you may receive an error message "Redownload Unavailable with This Apple ID".
-    # This message is safe to ignore. (https://github.com/dustinlyons/nixos-config/issues/83)
-
-    masApps = {
-      AppleConfigurator = 1037126344;
-      Magnet = 441258766;
     };
   };
 
@@ -86,29 +78,16 @@ in
             };
           };
 
+          # App entries come from modules/darwin/apps; this is for the rest.
           dock = {
             enable = true;
             entries = [
-              { path = "/Applications/Firefox Developer Edition.app/"; }
-              # TODO: Maybe this is a good case for trying out modules + options?
-              #       I don't want messages to be in the dock on my work machine,
-              #       but I do want it on my personal ones.
-              # { path = "/System/Applications/Messages.app/"; }
-              { path = "/Applications/Ghostty.app/"; }
-              { path = "/Applications/1Password.app/"; }
-              { path = "/Applications/Visual Studio Code.app/"; }
-              { path = "/Applications/Spotify.app/"; }
-              { path = "/Applications/ChatGPT.app/"; }
               {
                 path = "${config.home.homeDirectory}/Downloads";
                 section = "others";
                 options = "--view fan --display stack";
+                order = 900;
               }
-              # {
-              #   path = "${config.users.users.${user}.home}/.local/share/";
-              #   section = "others";
-              #   options = "--sort name --view grid --display folder";
-              # }
             ];
           };
         };

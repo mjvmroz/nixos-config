@@ -467,14 +467,22 @@ in
           "--border"
           "--info=inline"
         ];
-        fileWidgetCommand = "fd --type f --hidden --follow --exclude .git";
-        fileWidgetOptions = [
-          "--preview 'bat --color=always --style=numbers --line-range=:200 {}'"
-        ];
-        changeDirWidgetCommand = "fd --type d --hidden --follow --exclude .git";
-        changeDirWidgetOptions = [
-          "--preview 'eza -1 --color=always --icons {}'"
-        ];
+        fileWidget = {
+          command = "fd --type f --hidden --follow --exclude .git";
+          options = [
+            "--preview 'bat --color=always --style=numbers --line-range=:200 {}'"
+          ];
+        };
+        changeDirWidget = {
+          command = "fd --type d --hidden --follow --exclude .git";
+          options = [
+            "--preview 'eza -1 --color=always --icons {}'"
+          ];
+        };
+        # Said out loud so home-manager stops warning that fzf and atuin both
+        # want ^R. Atuin wins by load order regardless; this is the same
+        # outcome, declared rather than relied upon.
+        historyWidget.command = "";
       };
 
       # `y` opens the browser and leaves the shell in whatever directory you

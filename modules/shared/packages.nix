@@ -18,7 +18,7 @@ with pkgs;
   pgcli # PostgreSQL command line interface
 
   # General packages for development and system management
-  silver-searcher # Nice search tool
+  silver-searcher-ng # Nice search tool; the maintained ag fork, still `ag`
   tldr # friendlier man pages
   aspell # Spell checker
   aspellDicts.en # English dictionary

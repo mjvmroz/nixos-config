@@ -53,8 +53,9 @@ sudo nix run github:nix-darwin/nix-darwin#darwin-rebuild -- switch --flake .#cho
 sudo darwin-rebuild switch --flake .
 ```
 
-The installer creates the `nixbld` group at GID 350, which is why `ids.gids.nixbld` is pinned to
-350 for `chomusuke` in `flake.nix`. If a future installer changes that, activation will fail until
+Work machines are bootstrapped by an internal tool rather than by the upstream installer, and it
+creates the `nixbld` group at GID 350, which is why `ids.gids.nixbld` is pinned to 350 in
+`modules/darwin/profiles/work.nix`. If a future installer changes that, activation will fail until
 the two agree.
 
 #### Manual steps:

@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
-      url = "github:LnL7/nix-darwin";
+      url = "github:nix-darwin/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew = {
@@ -38,8 +38,6 @@
       flake = false;
     };
     hyprland.url = "github:hyprwm/Hyprland";
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     stylix.url = "github:nix-community/stylix";
     devenv.url = "github:cachix/devenv";
   };
@@ -54,7 +52,6 @@
       home-manager,
       nixpkgs,
       agenix,
-      flake-parts,
       hyprland,
       stylix,
       devenv,
